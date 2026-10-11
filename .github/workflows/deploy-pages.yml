@@ -1,7 +1,7 @@
 # Deploy landing "Tết 2027 Happier" lên GitHub Pages.
 #
 # Tạo theo lệnh deploy của user ở GATE 2 — nguyên văn (user · group chat "Demo MVP 1" ·
-# 2026-10-11): "GẤP RÚT BỎ QUA TEST, MERGE VÀ DEPLOY ĐỂ TÔI THẤY SẢN PHẨM"
+# 2026-10-11): "GẤP RÚT BỎA QUA TEST, MERGE VÀ DEPLOY ĐỂ TÔI THẤY SẢN PHẨM" [sic]
 #
 # Bản này sửa 4 điểm Architect nêu sau khi bản đầu lên `main` (review chưa kịp):
 #   1. `permissions` mức workflow chỉ còn `contents: read`. `pages: write` + `id-token: write`
@@ -10,12 +10,21 @@
 #   2. Toàn bộ `actions/*` pin theo commit SHA (không dùng tag major) — repo public.
 #   3. Bỏ `enablement: true` của `configure-pages`: bản cũ cố tự bật Pages bằng token CI và
 #      đã fail ở run 38130695550. Bật Pages là thao tác của user, không phải của CI.
-#   4. Giữ `push: main` + `workflow_dispatch` theo lệnh deploy hiện tại. Sau khi user đã thấy
-#      sản phẩm, nên chuyển về `workflow_dispatch` và bật required reviewer cho environment
-#      `github-pages`, để mọi lần deploy phải chờ người duyệt.
+#   4. Trigger nay là `workflow_dispatch` DUY NHẤT. Trong lúc gấp để user thấy sản phẩm, file
+#      từng có thêm `push: branches: [main]`; điều đó đã tạo **3 lần deploy tự chạy mà không ai
+#      bấm nút** (10:05:22Z / 10:07:12Z / 10:08:09Z — khi Pages còn tắt nên chưa gây hậu quả).
+#      Nay Pages ĐÃ bật: nếu giữ `push: main` thì **mọi commit lên `main` sẽ tự phát hành ra
+#      công khai, không ai duyệt** — phá luật "chỉ deploy khi user nói Duyệt". Nên đã gỡ, theo
+#      yêu cầu review của Architect (R10).
 #
-# Retry 2026-10-11: user báo đã cập nhật quyền Pages cho repo; Chief push lại để kích hoạt
-# một run mới (nguồn: user · group chat "Demo MVP 1" · 2026-10-11).
+# Trạng thái: run `38130989159` (push commit `3379084`) **success** ⇒ trang đã sống ở
+# https://001123.github.io/dsh-bot-demo-mvp-1/ — kiểm `curl`: trang **200**, `favicon.svg`
+# **200** (`image/svg+xml`), CSS trang tự tham chiếu **200**, không URL nào trang tham chiếu
+# ≥ 400 ⇒ AC5 đạt trên môi trường thật. Hồ sơ đầy đủ: `docs/gate2-log.md`.
+#
+# Việc còn lại của user để siết lớp chặn: bật **required reviewer** cho environment
+# `github-pages` (Settings → Environments). Khi đó kể cả có người bấm "Run workflow", deploy
+# vẫn phải chờ duyệt.
 #
 # Repo không có `package-lock.json` (quyết định của user) ⇒ dùng `npm install --include=dev`
 # vì môi trường CI/host đặt NODE_ENV=production sẽ bỏ qua devDependencies.
@@ -23,8 +32,6 @@
 name: Deploy to GitHub Pages
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
