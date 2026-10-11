@@ -1,9 +1,10 @@
 # ADR 0001 — Chọn stack cho landing page Tết Đinh Mùi 2027
 
-- Trạng thái: **PROPOSED — chờ user chốt ở GATE 1b (Architect KHÔNG tự chốt)**
+- Trạng thái: **ACCEPTED — user chốt ở GATE 1b ngày 2026-10-11** (nguyên văn: *"Dùng astro starlight + đẩy lên github pages, fe thì dùng tailwindcss"*)
 - Ngày: 2026-10-11
 - Người soạn: Architect
 - Tham chiếu: `docs/spec.md` (APPROVED, GATE 1a ngày 2026-10-11), repo `001123/dsh-bot-demo-mvp-1`
+- Baseline spec: bản trên `main`, commit `79d917c` (blob `165601395fd0f6b017284b5120cf361cdc42f3d2`). Bản workspace (`6654` byte) cũ hơn bản repo (`6727` byte) đúng 2 điểm: thêm dòng metadata "Issue theo dõi" và sửa cross-ref mục 5 từ Q7 → **Q4** (đếm ngược là Q4). AC1–AC9, US1–US3 và phạm vi không đổi.
 
 ## 1. Bối cảnh và ràng buộc
 
@@ -119,14 +120,20 @@ Nếu chọn PA1, việc bổ sung test tự động sau này vẫn làm đượ
 
 Q4–Q8 không đổi kiến trúc nên chỉ hỏi–đáp, không cần thành bảng phương án: Q4 (đếm ngược) là 1 task nhỏ thêm được trên cả 3 PA; Q5 (deploy) chốt ở GATE 2; Q6 (deadline) dùng để xếp thứ tự task; Q7 (âm lịch) chỉ là thêm 1 chuỗi hiển thị; Q8 (trình duyệt) mặc định khuyến nghị Chrome/Safari/Firefox 2 phiên bản gần nhất, fallback CSS cơ bản.
 
-## 5. Hệ quả nếu chọn PA1
+### Hệ quả kỹ thuật của Q4 và Q5 (không đổi PA đã chốt)
+
+- **Q4 = có đếm ngược** (đồng ý với CodeReader): làm bằng JS/island tĩnh tính từ `Date` phía client, **không** gọi API/backend (spec §5 out-of-scope). Hệ quả: AC6 siết (test console cả trước và sau khi đồng hồ tick); AC8 vẫn đạt vì nội dung chính nằm trong HTML, chỉ giá trị "còn X ngày" do JS điền; nên có fallback text tĩnh khi JS tắt. Đây là 1 task riêng trong `docs/plan.md`.
+- **Q5 = cần URL công khai**: đã chọn GitHub Pages ở GATE 1b. Deploy thật vẫn phải qua GATE 2 (chữ "Duyệt" của user); ADR này không tự cho phép deploy. Điều kiện tiên quyết là mục 7.3 (Pages cho repo private).
+- Nếu user chọn Q4 = có, phần AC bổ sung do Analyst soạn và Chief push vào spec **trước** khi tôi chốt `docs/plan.md`.
+
+## 5. Hệ quả nếu chọn PA1 (đã bị loại — giữ lại làm dấu vết)
 
 - Repo sẽ có: `index.html`, `styles.css`, `assets/`, `README.md`, `docs/`.
 - Có thể deploy GitHub Pages mà không cần CI build.
 - Không có `package.json` ⇒ mọi kiểm thử tự động phải gọi qua `npx` (chấp nhận được cho demo).
 - Nếu sau này thêm trang thứ hai, sẽ cần ADR mới (ghi nợ kỹ thuật).
 
-### Nợ kỹ thuật phải ghi nhận nếu chọn PA1
+### Nợ kỹ thuật đã cân nhắc khi so sánh PA1
 
 | Nợ | Ảnh hưởng | Trả khi nào |
 |---|---|---|
@@ -137,4 +144,23 @@ Q4–Q8 không đổi kiến trúc nên chỉ hỏi–đáp, không cần thành
 
 ## 6. Quyết định
 
-**Chưa có.** Chờ user chọn ở GATE 1b. Khi có lựa chọn, Architect sẽ điền mục này (ai chốt, ngày, lý do) rồi mới chuyển sang GATE 1c (`docs/plan.md`).
+- **Người chốt**: user (Duy), tại GATE 1b, ngày 2026-10-11.
+- **Nguyên văn câu trả lời**: *"Dùng astro starlight + đẩy lên github pages, fe thì dùng tailwindcss"*
+- **Diễn giải (không thêm bớt)**: PA3 (Astro) + Tailwind CSS cho front-end + Astro Starlight + deploy lên GitHub Pages.
+- **Đối chiếu khuyến nghị**: Architect khuyến nghị PA1; user chọn PA3 kèm 2 bổ sung. PA1/PA2 bị loại theo lựa chọn của user, **không** theo khuyến nghị của Architect. Quyết định thuộc user.
+- **Điểm còn mở (cần user xác nhận)**: giữ Starlight hay dùng Astro "trơn" (xem mục 7.1 — Starlight là theme tài liệu, không phải theme landing page).
+
+## 7. Hệ quả của lựa chọn này
+
+1. **Starlight là theme tài liệu, không phải theme landing page.** Để dùng cho 1 trang Tết phải: dùng `template: splash`, tắt sidebar/pagination/"Edit page"/search, override theme. Các thành phần mặc định của Starlight đều không cần cho spec này ⇒ **nhiều việc hơn** phương án "Astro + Tailwind trơn", dù vẫn đạt AC1–AC9.
+2. **Tailwind không hoà sẵn với Starlight.** Starlight dùng CSS custom property/token riêng; class Tailwind không áp vào component Starlight. Cần chốt quy ước: Tailwind cho phần page tự viết, Starlight chỉ override qua CSS variable.
+3. **GitHub Pages + repo private (RỦI RO CẦN USER CHỐT).** Pages cho repo private cần GitHub Pro/Team/Enterprise. Nếu account đang Free, 3 lựa chọn: (a) chuyển repo sang public, (b) dùng account có Pro, (c) deploy bằng Netlify/Cloudflare Pages (hỗ trợ repo private, free). Đây là điều kiện tiên quyết của AC1 (URL công khai).
+4. **Base path bắt buộc.** Pages phục vụ ở `/dsh-bot-demo-mvp-1/` ⇒ phải khai `site` + `base` trong `astro.config.mjs`. Quên ⇒ CSS/ảnh 404 ⇒ **vi phạm AC5**.
+5. **Q4 (đếm ngược) nếu có**: viết dạng island `client:load`, giữ JS tối thiểu để không phá AC9/AC6.
+6. **AC8 vẫn đạt**: Astro render tĩnh, nội dung nằm trong HTML.
+7. **Thay đổi phạm vi**: deploy URL công khai vốn thuộc out-of-scope (spec §5). User chủ động yêu cầu ⇒ phải ghi rõ trong `docs/plan.md` là thay đổi phạm vi cần user duyệt lại ở GATE 1c.
+8. **Chi phí/thời gian tăng** so với PA1: framework + theme + workflow Pages + cấu hình base path. Bù lại có lint/build/CI sẵn.
+
+## 8. Việc tiếp theo
+
+Architect chuyển sang GATE 1c: viết `docs/plan.md` chia task (file sẽ tạo/sửa + test plan cho từng AC), chờ user duyệt. CodeReader **không** được code trước khi plan được duyệt.
