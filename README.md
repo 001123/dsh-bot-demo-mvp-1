@@ -4,10 +4,10 @@ Demo MVP 1 — SDLC gate walkthrough (Chief / Analyst / Architect / CodeReader)
 
 Landing page cho Tết Nguyên đán 2027 (Đinh Mùi) — trang tĩnh, một URL.
 
-Sản phẩm demo để chạy thử quy trình SDLC có gate. Baseline spec: `docs/spec.md`
-(commit `fb4b5f9`, blob `87e5c0f6`). Kế hoạch thực thi: `docs/plan.md` (bản 7,
-blob `e6561ef6`). Chuỗi hiển thị trên trang: `docs/content.md` — **nguồn duy nhất**,
-không tự viết text ngoài file đó.
+Sản phẩm demo để chạy thử quy trình SDLC có gate. Baseline spec: `docs/spec.md` trên
+`main`, commit `bd3406c`, blob `75ecee11`. Kế hoạch thực thi: `docs/plan.md` bản 8,
+blob `c40bb6c3`. Chuỗi hiển thị trên trang: `docs/content.md` (blob `7d21a4d7`) —
+**nguồn duy nhất**, không tự viết text ngoài file đó.
 
 ## Công nghệ
 
@@ -54,4 +54,5 @@ http://localhost:4321/dsh-bot-demo-mvp-1/
 ```
 
 `site` và `base` được khai trong `astro.config.mjs`. Quên `base` ⇒ CSS/ảnh 404 trên
-Pages ⇒ vi phạm AC5.
+Pages ⇒ vi phạm AC5. Cùng lý do đó, favicon được khai bằng đường dẫn có base:
+`/dsh-bot-demo-mvp-1/favicon.svg`.
