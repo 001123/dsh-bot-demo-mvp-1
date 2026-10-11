@@ -1,0 +1,81 @@
+# T9 — GitHub Pages deployment.
+#
+# Status: NOT ENABLED and NOT RUN. The file lives on `feat/t1-scaffold` because Chief chose
+# route (a): the branch merges fast-forward, so everything on it reaches `main` at merge time —
+# there is no "merge first, review later". Pages is still off (`has_pages: false`) and nothing
+# here fires by itself.
+#
+# Per R10 this file must pass Architect review BEFORE that merge. Architect accepted an earlier
+# revision (blob 43ede3a0, tag-pinned); THIS revision pins every action by full SHA and runs
+# configure-pages before the build, so it needs a delta review of this blob.
+#
+# Reviewer notes:
+#   * Trigger is `workflow_dispatch` ONLY — no push, no schedule, no pull_request. Nothing
+#     here fires by itself, and no Pages deployment starts without a human running it.
+#   * Permissions are declared per JOB, never at workflow level: `build` gets `contents: read`
+#     only; only `deploy` gets `pages: write` + `id-token: write`.
+#   * The build job executes code from this repository (`npm install`, `npm run build`), which
+#     is exactly why it must never hold a write token. The 2026-10-11 review of
+#     `generate-lockfile.yml` found that class of hole (write token in a job that runs repo
+#     code) and the file was removed.
+#   * Every third-party action is pinned to a full commit SHA, with the human-readable tag in
+#     a trailing comment. Tags are mutable; SHAs are not.
+#   * No `package-lock.json` is committed (user decision, plan bản 10 P7), so the install step
+#     uses `npm install --include=dev` explicitly rather than relying on the runner not having
+#     `NODE_ENV=production`.
+name: Deploy to GitHub Pages
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build the static site
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Set up Node
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22.12.0'
+
+      # Configure Pages BEFORE the build: the action publishes `base_path` (and related
+      # outputs) that a build is expected to consume. Running it after the build would work
+      # today only because astro.config.mjs hardcodes `base`; if the base path ever comes from
+      # this step, the old order would fail silently.
+      - name: Configure Pages
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+
+      - name: Install dependencies
+        run: npm install --include=dev
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload the site as a Pages artifact
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
+        with:
+          path: dist
+
+  deploy:
+    name: Publish to Pages
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
