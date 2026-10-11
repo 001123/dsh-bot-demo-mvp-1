@@ -1,0 +1,21 @@
+---
+// T3 — hero. The hero is a Tết greeting (Q1(a)), so it carries no call to action and no
+// outbound link (AC7). Every string comes from src/content/site.ts, which is docs/content.md
+// verbatim — the lunar line below is mandatory copy for AC2, do not reword it.
+import { site } from '../content/site'
+---
+
+<section class="bg-tet-red text-tet-cream">
+  <div class="mx-auto w-full max-w-3xl px-5 py-14 text-center">
+    <h1 class="text-4xl font-bold tracking-tight text-tet-gold sm:text-5xl">
+      {site.hero.heading}
+    </h1>
+    <p class="mt-4 text-lg">{site.hero.subheading}</p>
+    <p class="mt-6 leading-relaxed">{site.hero.milestone}</p>
+    <!-- Q7 = "cả 2": the mandatory lunar string, verbatim from docs/content.md, and the
+         exact string AC2 binds its assertion to. It is capitalised in content.md even
+         though the milestone line above spells it mid-sentence. -->
+    <p class="mt-3 text-lg font-medium text-tet-gold-light">{site.hero.lunar}</p>
+    <p class="mt-2 leading-relaxed">{site.hero.zodiac}</p>
+  </div>
+</section>

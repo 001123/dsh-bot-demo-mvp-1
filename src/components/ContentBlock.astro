@@ -1,0 +1,29 @@
+---
+// T3 — one content block (AC3): a heading, at least one Vietnamese paragraph, and an
+// optional list. The text is passed in already, straight from src/content/site.ts.
+interface Props {
+  heading: string
+  paragraphs: readonly string[]
+  listItems?: readonly string[]
+}
+
+const { heading, paragraphs, listItems = [] } = Astro.props
+---
+
+<section class="mx-auto w-full max-w-3xl px-5 py-10">
+  <h2 class="text-2xl font-semibold text-tet-red-dark">{heading}</h2>
+  {
+    paragraphs.map((text) => (
+      <p class="mt-4 leading-relaxed">{text}</p>
+    ))
+  }
+  {
+    listItems.length > 0 && (
+      <ul class="mt-4 list-disc space-y-2 pl-6 leading-relaxed">
+        {listItems.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    )
+  }
+</section>

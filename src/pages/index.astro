@@ -1,10 +1,22 @@
 ---
-// T2: the page now uses the shared frame. Hero and the three content blocks land in T3,
-// the countdown island in T7 — all strings come from src/content/site.ts, which mirrors
-// docs/content.md verbatim.
+// T3 — hero + the three content blocks (AC2, AC3, AC8). All copy comes from
+// src/content/site.ts, which mirrors docs/content.md verbatim; nothing is written here.
+// The countdown island lands in T7.
 import BaseLayout from '../layouts/BaseLayout.astro'
+import Hero from '../components/Hero.astro'
+import ContentBlock from '../components/ContentBlock.astro'
+import { site } from '../content/site'
 ---
 
 <BaseLayout>
-  <div class="mx-auto w-full max-w-3xl px-5"></div>
+  <Hero />
+  {
+    site.blocks.map((block) => (
+      <ContentBlock
+        heading={block.heading}
+        paragraphs={block.paragraphs}
+        listItems={'listItems' in block ? block.listItems : undefined}
+      />
+    ))
+  }
 </BaseLayout>

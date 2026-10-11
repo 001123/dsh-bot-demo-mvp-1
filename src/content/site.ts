@@ -1,7 +1,8 @@
 // Every Vietnamese string shown on the page lives here, copied verbatim from
-// docs/content.md (blob 7d21a4d7, APPROVED at GATE 1c). That file is the single source of
-// copy for this project: do not reword, translate, or "smooth out" anything here. Changes
-// go through the Analyst and Chief, who update docs/content.md first.
+// docs/content.md (blob 6866f0ce, APPROVED at GATE 1c; bổ sung chuỗi âm lịch cho Q7 =
+// "cả 2"). That file is the single source of copy for this project: do not reword,
+// translate, or "smooth out" anything here. Changes go through the Analyst and Chief, who
+// update docs/content.md first.
 //
 // Drift rule (plan T3): each string rendered on the page must be a substring of
 // docs/content.md, whitespace and line breaks aside.
@@ -16,7 +17,11 @@ export const site = {
   hero: {
     heading: 'Tết 2027 Happier',
     subheading: 'Tết Nguyên đán Đinh Mùi 2027',
-    milestone: 'Mùng 1 Tết: thứ Bảy, 06/02/2027 · Tất niên: thứ Sáu, 05/02/2027',
+    milestone:
+      'Mùng 1 Tết: thứ Bảy, 06/02/2027 (dương lịch) · mùng 1 tháng Giêng năm Đinh Mùi (âm lịch) · Tất niên: thứ Sáu, 05/02/2027 (ngày cuối tháng Chạp)',
+    /** Q7 = "cả 2": mandatory lunar string, verbatim from docs/content.md, and the string
+     *  AC2 tests bind to. Never reword it. */
+    lunar: 'Mùng 1 tháng Giêng năm Đinh Mùi',
     zodiac: 'Năm Đinh Mùi — năm con Dê',
   },
 
@@ -24,7 +29,7 @@ export const site = {
     /** Rendered as-is; `{X}` is replaced by the rounded-up number of days. */
     labelTemplate: 'Còn {X} ngày nữa là đến mùng 1 Tết',
     /** Static text that stays in the HTML for the no-JS case (AC8, AC10). */
-    noscriptFallback: 'Mùng 1 Tết Đinh Mùi: thứ Bảy, 06/02/2027',
+    noscriptFallback: 'Mùng 1 tháng Giêng năm Đinh Mùi — thứ Bảy, 06/02/2027 (dương lịch)',
     /** Label shown after the milestone passes; the clock stops ticking (AC10). */
     afterMilestone: 'Chúc Mừng Năm Mới',
     /** 2027-02-06T00:00:00+07:00 — mùng 1 Tết, fixed Vietnam time (AC10). */
