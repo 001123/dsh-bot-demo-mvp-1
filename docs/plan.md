@@ -1,58 +1,78 @@
 # Plan — Landing page Tết Âm lịch 2027 (Đinh Mùi) · Issue #1
 
-- Trạng thái: **DRAFT — chờ user duyệt ở GATE 1c** (chưa có label `arch-approved`)
-- Người soạn: Architect (ARCH) · Người thực thi: CodeReader (CODE) · Ngày: 2026-10-11
-- Nguồn gốc: Architect viết lại bản này. Trong workspace trước đó có nhiều bản nháp bị **nhiều tác nhân sửa chồng lên nhau** (kể cả một cảnh báo nói rằng file "không do Architect viết", và một bản nói ngược lại). Bản có hiệu lực là bản trên `main` sau commit chứa file này — kiểm bằng `get_commit ... full_patch`.
-- Stack đã chốt (nguồn: ADR §0): **Astro thường (KHÔNG Starlight) + Tailwind CSS**, deploy **GitHub Pages**, **repo public**, base path `/dsh-bot-demo-mvp-1/`
-- Đáp án đã có: Q1(a) chúc Tết · Q2(a) không thương hiệu, theme đỏ–vàng · Q3(a) team viết nội dung mẫu · Q4 = **có đếm ngược** · Q5 = deploy công khai
-- Còn thiếu (không chặn T1–T6): Q6 deadline · Q7 âm lịch · Q8 trình duyệt tối thiểu
+- Trạng thái: **DRAFT — khung plan, CHƯA chốt** (GATE 1c chưa qua). Baseline: spec `adeab03` (Q1a/Q2a/Q3a/Q4/Q5 đã trả lời; **còn Q6/Q7/Q8**) + ADR `0002` (`e29cf5b`: bỏ Starlight, repo public)
+- Người soạn: Architect (ARCH) · Người thực thi: CodeReader (CODE)
+- Ngày: 2026-10-11 (bản 5 — thêm P6/T3 phụ thuộc P6 và làm rõ AC5 ở T4; theo baseline spec `adeab03` + ADR 0002 `e29cf5b`)
+- Nguồn gốc file: bản 1 ngày 2026-10-11 (commit `55bf79c`), do Architect soạn. Ghi chú cũ trong bản 2 về "ai viết file" đã được gỡ; không xác định được tác nhân của từng lần push vì mọi commit qua kết nối này đều hiện chung author `001123` — việc này không ảnh hưởng nội dung plan.
+- Stack đã chốt: **Astro (SSG, KHÔNG Starlight) + Tailwind CSS**, deploy **GitHub Pages**, repo **public** (ADR 0001 `c24ac6d` + ADR 0002 `e29cf5b`)
+- Baseline spec: `docs/spec.md` trên `main`, commit `adeab03` (chủ đề "Tết 2027 Happier"; deploy Pages in-scope; **AC10** đếm ngược đã thêm)
 
-> ⛔ **GATE 1c chưa qua.** CodeReader **không** được tạo file sản phẩm nào cho tới khi user duyệt plan này và có label `arch-approved`.
+> ⛔ **GATE 1c chưa qua.** File này là khung để user duyệt sớm phần kỹ thuật. CodeReader **không** được tạo file sản phẩm nào cho tới khi user duyệt plan và có label `arch-approved`.
 
-## 0. Điều kiện tiên quyết
+## 0. Điều kiện tiên quyết (phải xong trước khi implement)
 
-| # | Điều kiện | Ai | Trạng thái |
+| # | Điều kiện | Ai làm | Trạng thái |
 |---|---|---|---|
-| P1 | Q1/Q2/Q3/Q4 trả lời | user | ✅ xong |
-| P2 | Repo public để Pages chạy trên account Free | user | ✅ xong — repo `"visibility": "public"`, Architect kiểm chứng độc lập bằng API không đăng nhập |
-| P3 | User duyệt thay đổi phạm vi (deploy công khai) | user | ⏳ chờ (đã chuyển in-scope ở spec `515db703`) |
+| P1 | User trả lời **Q6, Q7, Q8** (deadline, âm lịch, trình duyệt). Q1(a), Q2(a), Q3(a), Q4 (có đếm ngược), Q5 đã trả lời | user | 🔶 một phần — còn Q6–Q8 |
+| P2 | ~~Repo public~~ — **đã xong**: ADR 0002 ghi repo `private: false`, `visibility: "public"` (Chief xác minh qua API 2026-10-11 09:06) | user | ✅ xong |
+| P3 | ~~Chốt đổi phạm vi~~ — **đã xong**: spec `adeab03` đưa GitHub Pages và AC10 (đếm ngược) vào in-scope; user còn phải duyệt chính thức khi duyệt plan | Chief/user | ✅ xong (chờ duyệt plan) |
 | P4 | User duyệt plan này ở GATE 1c | user | ⏳ chờ |
-| P5 | Deploy thật lên Pages | user | ⏳ chờ chữ **"Duyệt"** ở GATE 2 |
+| P5 | Deploy thật lên Pages chỉ sau chữ **"Duyệt"** ở GATE 2 (`has_pages` hiện `false`) | user | ⏳ chờ |
+| P6 | **User duyệt `docs/content.md` ở GATE 1c** (hồ sơ duyệt gồm plan + content; content hiện là blob `bb3feb0e`, DRAFT) | user | ⏳ chờ |
 
-## 1. Kiến trúc
+Chưa xong P1 và P4 thì không task nào bắt đầu. T7 đã **BẬT** (Q4 = có) và map vào **AC10**. **T3 còn phụ thuộc P6** (duyệt `docs/content.md`) — P6 chưa xong thì chưa được viết nội dung lên trang.
 
-- **Astro SSG, KHÔNG Starlight**: 1 route `/` từ `src/pages/index.astro` ⇒ AC1, AC8. Không `src/content/docs`, không `src/content.config.ts`, không file override theme tài liệu.
-- **Tailwind CSS** áp trực tiếp lên component tự viết (`src/components/*.astro`); không cần override `--sl-color-*`.
-- **Nội dung**: hero (Tết Nguyên đán 2027 · Đinh Mùi · 06/02/2027 thứ Bảy · tất niên 05/02/2027) + ≥3 khối (ý nghĩa Tết, phong tục, lời chúc) — văn bản tiếng Việt thật, không placeholder (Q1a, Q3a).
-- **Theme**: đỏ–vàng truyền thống, không logo/thương hiệu (Q2a); khai trong Tailwind theme + CSS variable.
-- **Đếm ngược (Q4 = có)**: island `client:load`, tính từ `Date` client tới `2027-02-06T00:00:00+07:00`, không gọi API/backend, có fallback text tĩnh khi tắt JS.
-- **JS tối thiểu**: chỉ island đếm ngược; phần còn lại render tĩnh để giữ AC9.
-- **Assets**: SVG/CSS tự vẽ hoặc ảnh có giấy phép (ghi nguồn trong README) — tránh R3; mọi `<img>` có `alt` tiếng Việt (AC5).
-- **Base path**: `site: 'https://001123.github.io'`, `base: '/dsh-bot-demo-mvp-1'`; test AC1/AC5 phải chạy trên đường dẫn có base, không chỉ `localhost:4321/`.
+## 1. Phạm vi và thay đổi phạm vi
 
-## 2. Task
+- **Deploy URL công khai (GitHub Pages) là in-scope** theo spec `adeab03` (user chốt Q5), nhưng **chạy deploy thật** vẫn thuộc GATE 2.
+- **AC10 (đồng hồ đếm ngược) là tiêu chí mới thêm sau baseline GATE 1a** — user đã yêu cầu; spec ghi rõ phải được duyệt chính thức ở GATE 1c.
+- Repo **đã public** (ADR 0002) ⇒ source, spec, ADR, plan ai cũng xem được. **Không** được đưa secret/token vào repo.
+- Chủ đề trang: **"Tết 2027 Happier"**; hero là **lời chúc Tết** (Q1a) — **không CTA dẫn ra ngoài**; nếu có link thì phải là URL thật (AC7 cấm `#` rỗng).
+- Theme **đỏ–vàng truyền thống**, không logo/bảng màu riêng (Q2a).
+- Nội dung do **team viết bản mẫu tiếng Việt** (Q3a); bản mẫu trình user duyệt ở GATE 1c.
 
-### T1 — Khởi tạo Astro + Tailwind
+## 2. Kiến trúc dự kiến
+
+- **Astro SSG (không Starlight)** render HTML tĩnh; 1 route duy nhất `/` ⇒ đạt AC1, AC8. Không có `template: splash`, không `pagefind`, không sidebar — các phần đó đã bị ADR 0002 bỏ.
+- **Tailwind CSS** dùng cho toàn bộ page/component; vì không còn Starlight nên **không cần** override `--sl-color-*`.
+- **Theme đỏ–vàng** đặt qua biến trong `src/styles/global.css` + config Tailwind.
+- **Đếm ngược (AC10)**: island Astro `client:load`, tính từ `Date()` phía client tới **`2027-02-06T00:00:00+07:00`** (mùng 1 Tết theo giờ VN); **không** gọi API/backend; có text tĩnh thay thế khi tắt JS; console sạch trước và sau khi giá trị cập nhật.
+- **JS tối thiểu**: chỉ island đếm ngược, phần còn lại render tĩnh để giữ AC9.
+- **Assets**: SVG/CSS tự vẽ hoặc ảnh có giấy phép, đặt trong `public/` — tránh R3 (bản quyền). Mọi `<img>` phải có `alt` tiếng Việt (AC5).
+- **Base path**: Pages phục vụ tại `/dsh-bot-demo-mvp-1/` ⇒ bắt buộc khai `site: 'https://001123.github.io'`, `base: '/dsh-bot-demo-mvp-1'` trong `astro.config.mjs`; quên ⇒ CSS/ảnh 404 ⇒ vi phạm AC5.
+
+## 3. Danh sách task
+
+Thứ tự là thứ tự thực thi. (Task cấu hình Starlight của bản 1–2 **đã bỏ** theo ADR 0002.)
+
+### T1 — Khởi tạo dự án Astro + Tailwind
 - **File tạo**: `package.json`, `astro.config.mjs`, `tsconfig.json`, `tailwind.config.mjs`, `src/styles/global.css`, `.gitignore`, `README.md`
-- **Nội dung**: cài `astro` + `@astrojs/tailwind` (hoặc Tailwind v4 qua plugin Vite — chốt **một** phiên bản); khai `site` + `base`; pin phiên bản.
+- **Nội dung**: cài Astro + Tailwind (chốt **một** phiên bản: v4 qua plugin Vite, hoặc v3 + `@astrojs/tailwind`); khai `site` + `base` như mục 2; pin phiên bản.
 - **Test**: `npm ci && npm run build` PASS; `npm run preview` mở được `http://localhost:4321/dsh-bot-demo-mvp-1/`.
-- **Phụ thuộc**: P4.
+- **Phụ thuộc**: P1, P4.
 
 ### T2 — Layout + theme đỏ–vàng
 - **File tạo**: `src/layouts/BaseLayout.astro`, `src/styles/global.css`
-- **Nội dung**: `<html lang="vi">`, title/description, palette đỏ–vàng (Q2a), footer đơn giản; không sidebar, không search, không nút theme.
+- **Nội dung**: `<html lang="vi">`, title/description, palette đỏ–vàng (Q2a), footer đơn giản; không sidebar, không search, không nút đổi theme.
 - **Test**: build không warning; DOM không có `<form>` và không có `<a href="#">` rỗng (AC7).
 - **Phụ thuộc**: T1.
 
-### T3 — Hero + 3 khối nội dung (AC2, AC3, AC8)
+### T3 — Hero là lời chúc Tết + 3 khối nội dung (AC2, AC3, AC8)
 - **File tạo/sửa**: `src/pages/index.astro`, `src/components/Hero.astro`, `src/components/ContentBlock.astro`, `src/content/site.ts`
-- **Nội dung**: hero đủ 4 chuỗi ngày Tết; ≥3 khối có tiêu đề + đoạn văn tiếng Việt; giọng chúc Tết (Q1a); nội dung team viết (Q3a).
-- **Test**: `grep` trên `dist/` thấy đủ chuỗi ngày Tết; không khớp `Lorem ipsum|TODO`; Playwright đọc DOM — AC2/AC3/AC8.
-- **Phụ thuộc**: T2.
+- **Nội dung**: hero đủ 4 chuỗi ngày Tết ("Tết Nguyên đán 2027", "Đinh Mùi", "06/02/2027 (thứ Bảy)", "Tất niên 05/02/2027") + **lời chúc Tết** theo chủ đề "Tết 2027 Happier", **không CTA ra ngoài** (Q1a); ≥3 khối có tiêu đề + đoạn văn tiếng Việt thật, không placeholder (Q3a).
+- **Nguồn nội dung (bắt buộc)**: `docs/content.md` (blob `bb3feb0e`, DRAFT) là **nguồn duy nhất** cho mọi chuỗi tiếng Việt hiển thị trên trang. CodeReader **không được tự sáng tác** text ngoài file đó. Muốn thêm/sửa/xoá nội dung ⇒ Analyst soạn → Chief đọc SHA và push `docs/content.md` trước, rồi plan/task mới đổi theo. T3 **không được bắt đầu** khi P6 (GATE 1c duyệt `docs/content.md`) chưa xong.
+- **Map nội dung → vị trí**: Hero ← mục "Hero" của content.md; khối 1 ← "Khối 1 — Tết Nguyên đán 2027"; khối 2 ← "Khối 2 — Phong tục ngày Tết"; khối 3 ← "Khối 3 — Lời chúc Tết"; footer ← mục "Footer".
+- **Chống trôi nội dung**: mỗi đoạn text trên trang phải copy **nguyên văn** từ `docs/content.md` (sai khác chỉ được ở khoảng trắng/xuống dòng). Không diễn giải lại, không "viết cho mượt", không dịch.
+- **Test**: `grep` trên `dist/` thấy đủ 4 chuỗi ngày Tết + chuỗi chủ đề; không khớp `Lorem ipsum|TODO`; đối chiếu từng chuỗi hiển thị với `docs/content.md` — mọi chuỗi phải là chuỗi con của content.md; Playwright đọc DOM — AC2/AC3/AC8.
+- **Phụ thuộc**: T2, **P6**.
 
 ### T4 — Hình ảnh/minh hoạ + `alt` (AC5)
-- **File tạo**: `public/` (SVG tự vẽ / ảnh có giấy phép), chèn vào component
-- **Test**: mọi `<img>` có `alt` tiếng Việt không rỗng; Playwright network log không có response ≥400 cho ảnh.
+- **File tạo**: `public/` (SVG tự vẽ / ảnh có giấy phép — theo `docs/content.md`: **không dùng ảnh ngoài**), chèn vào component nếu có
+- **AC5 được coi là đạt khi thoả MỘT trong hai nhánh** (ghi rõ nhánh nào trong báo cáo review):
+  - **Nhánh (a) — có ảnh raster** (`<img>` asset nhị phân): trang có **≥1 `<img>`** và **mọi** `<img>` có `alt` tiếng Việt không rỗng, mô tả nội dung ảnh; test `alt` non-empty + network log không có response ≥400.
+  - **Nhánh (b) — không dùng ảnh raster** (minh hoạ bằng CSS/SVG inline, `<img>` dùng `src` SVG): không bắt buộc có `<img>`; báo cáo review **phải ghi minh bạch nguyên văn một dòng**: `AC5 đạt do không dùng ảnh raster`. Vẫn phải quét DOM để chắc **không** tồn tại `<img>` nào thiếu/`alt` rỗng hay trỏ file 404 — nếu có thì rơi về nhánh (a).
+- **Bắt buộc dù ở nhánh nào**: trang vẫn **không** được có ảnh vỡ, icon 404, hay tham chiếu file không tồn tại (đúng nguyên văn AC5). Vì plan hiện chưa đảm bảo có ảnh raster, plan mặc định đi **nhánh (b)** trừ khi T3 chèn `<img>`; ai đổi sang nhánh (a) phải cập nhật dòng này và báo Architect.
+- **Test**: Playwright network log không có response ≥400 cho ảnh; DOM query `<img>` + đọc `alt` (`non-empty`, có ký tự tiếng Việt); ghi nhánh (a)/(b) vào báo cáo review.
 - **Phụ thuộc**: T3.
 
 ### T5 — Responsive 375 / 1440 (AC4)
@@ -60,26 +80,26 @@
 - **Test**: Playwright ở 375×812 và 1440×900: `scrollWidth <= clientWidth`; lưu screenshot 2 viewport cho review.
 - **Phụ thuộc**: T3, T4.
 
-### T6 — Bộ test tự động (map AC)
-- **File tạo**: `playwright.config.ts`, `tests/e2e/landing.spec.ts`, script `test:e2e`
+### T6 — Bộ test tự động (map AC1–AC10)
+- **File tạo**: `playwright.config.ts`, `tests/e2e/landing.spec.ts`, `tests/e2e/countdown.spec.ts`, script `test:e2e`
 - **Nội dung**:
   - AC1: GET `/dsh-bot-demo-mvp-1/` = 200, context ẩn danh, không redirect login.
-  - AC2/AC8: 4 chuỗi ngày Tết có trong HTML thô **và** trong DOM.
+  - AC2/AC8: 4 chuỗi ngày Tết + tiêu đề chủ đề có trong HTML thô **và** trong DOM.
   - AC3: ≥3 khối nội dung; không placeholder.
   - AC4: 2 viewport như T5.
-  - AC5: `alt` non-empty; không ảnh lỗi.
+  - AC5: `alt` non-empty; không ảnh lỗi (chạy trên đường dẫn **có base**).
   - AC6: gom `console` error + `pageerror` khi tải **và** sau khi scroll hết trang; assert rỗng.
-  - AC7: không `form`/`input[type=email]`/iframe thanh toán; `<a href>` không rỗng, không `"#"`.
+  - AC7: không `form`/`input[type=email]`/iframe thanh toán; `<a href>` không rỗng, không `="#"`.
   - AC9: `performance.getEntriesByType('navigation')[0].duration < 3000` trên preview local — **ghi số đo thật**, không assert cứng nếu CI chậm.
-  - AC10: xem T7.
+  - AC10: xem T7 (đặt trong `countdown.spec.ts`).
 - **Test**: `npx playwright test` PASS trên `npm run preview`.
-- **Phụ thuộc**: T3–T5.
+- **Phụ thuộc**: T3–T5, T7.
 
 ### T7 — Đếm ngược tới mùng 1 Tết (Q4 = có ⇒ BẮT BUỘC · AC10)
 - **File tạo**: `src/components/Countdown.astro` (island `client:load`)
-- **Nội dung**: tính từ `Date` client tới `2027-02-06T00:00:00+07:00`; không API/backend; fallback text tĩnh khi tắt JS; sau ngày Tết hiển thị "Chúc mừng năm mới".
-- **Test**: Playwright `clock` ở 3 mốc (trước Tết · đúng ngày · sau Tết), console sạch ở cả 3; AC8 vẫn đạt vì nội dung chính nằm trong HTML.
-- **Phụ thuộc**: AC10 do Analyst soạn, Chief push vào spec; T6.
+- **Nội dung**: tính từ `Date()` phía client tới **`2027-02-06T00:00:00+07:00`**; **không** API/backend (spec §5); fallback text tĩnh khi tắt JS (không để vùng trống); sau mốc hiển thị "Chúc mừng năm mới"; hiển thị "còn X ngày".
+- **Test**: Playwright `clock` ở 3 mốc — trước Tết (ví dụ 2027-01-20) · đúng ngày 06/02/2027 00:00 +07 · sau Tết (2027-02-10); assert nội dung đúng ở từng mốc + console sạch ở cả 3 (AC6, AC10); thêm case `javaScriptEnabled: false` để kiểm fallback; AC8 vẫn đạt vì nội dung chính nằm trong HTML.
+- **Phụ thuộc**: AC10 đã có trong spec `adeab03`; T6.
 
 ### T8 — README
 - **File sửa**: `README.md`
@@ -91,44 +111,55 @@
 - **File tạo**: `.github/workflows/deploy-pages.yml`
 - **Nội dung**: build Astro → upload artifact Pages; trigger `workflow_dispatch` trước; chỉ đổi sang `push: main` nếu user đồng ý.
 - **Test**: lint YAML / dry-run nếu có; **không** chạy deploy, không bật Pages.
-- **Gate**: chỉ chạy sau chữ **"Duyệt"** ở GATE 2. CodeReader không tự bật Pages, không tự merge.
+- **Gate**: `has_pages` hiện `false`; chỉ bật/chạy sau chữ **"Duyệt"** ở GATE 2. CodeReader không tự bật Pages, không tự merge.
 
-## 3. Test plan tổng hợp
+## 4. Test plan tổng hợp (map AC → cách kiểm → ai kiểm)
 
-| AC | Cách kiểm | Tool | Ai |
+| AC | Cách kiểm | Tool | Ai chạy |
 |---|---|---|---|
 | AC1 | GET trang = 200, ẩn danh, có base path | Playwright + `curl -I` | CODE, ARCH chạy lại |
 | AC2 | 4 chuỗi ngày Tết trong HTML thô + DOM | `grep dist/` + Playwright | CODE, ARCH |
 | AC3 | ≥3 khối nội dung, không placeholder | Playwright + regex | CODE, ARCH |
 | AC4 | 375/1440 không cuộn ngang | Playwright viewport + screenshot | CODE, ARCH |
-| AC5 | `alt` tiếng Việt, không 404 (trên đường dẫn có base) | Playwright network + DOM | CODE, ARCH |
+| AC5 | đạt theo T4: có `<img>` + `alt` tiếng Việt (nhánh a) **hoặc** không dùng ảnh raster (nhánh b, báo cáo ghi rõ); không 404 (trên đường dẫn có base) | Playwright network + DOM | CODE, ARCH |
 | AC6 | console/pageerror rỗng khi tải + scroll | Playwright listener | CODE, ARCH |
 | AC7 | không form/input; `<a href>` hợp lệ | Playwright DOM query | CODE, ARCH |
 | AC8 | nội dung chính có trong HTML trả về | `curl` + Playwright | CODE, ARCH |
 | AC9 | navigation duration < 3000ms, ghi số thật | Playwright performance | CODE ghi số, ARCH đối chiếu |
-| AC10 | đếm ngược 3 mốc thời gian, console sạch | Playwright clock | CODE, ARCH |
+| AC10 | đếm ngược 3 mốc + case tắt JS; console sạch | Playwright clock + `javaScriptEnabled: false` | CODE, ARCH |
 
 Review độc lập của Architect: chạy lại `npm ci && npm run build && npx playwright test` trên **đúng commit**, không tin báo cáo suông.
 
-## 4. Rủi ro
+## 5. Rủi ro của plan và cách xử lý
 
-| # | Rủi ro | Mức | Xử lý |
+| # | Rủi ro | Mức | Cách xử lý |
 |---|---|---|---|
-| R1 | Quên `base` ⇒ 404 CSS/ảnh trên Pages | Cao nếu quên | T1 khai ngay; AC5 test trên đường dẫn có base |
+| R1 | Quên `base` ⇒ 404 CSS/ảnh trên Pages | Cao nếu quên | T1 khai ngay; AC5 test trên đường dẫn **có base** |
 | R2 | Đếm ngược làm JS phình, ảnh hưởng AC9/AC6 | Trung bình | 1 island nhỏ; đo AC9 thật; fallback khi tắt JS |
 | R3 | Lệch phiên bản Astro/Tailwind (v4 vs v3) | Trung bình | Pin + commit lockfile; `npm ci` trong CI |
 | R4 | Bản quyền ảnh (R3 của spec) | Trung bình | Chỉ SVG/CSS tự vẽ hoặc ảnh có giấy phép ghi nguồn |
-| R5 | Nguồn của D2/D4 (Astro thường, Q4 = có) là relay của Analyst, chưa có xác nhận ở kênh chung | Trung bình | Đã ghi nguồn ở ADR §0; nếu user phủ nhận ⇒ revert 1 commit, bỏ T7/AC10 |
+| R5 | Thay đổi phạm vi (AC10, deploy công khai) thêm sau baseline GATE 1a | Trung bình | Spec `adeab03` đã ghi rõ; user phải duyệt chính thức ở GATE 1c; nếu user phủ nhận ⇒ revert và bỏ T7/AC10 |
 | R6 | Q6/Q7/Q8 đến muộn | Thấp | Q6 xếp lại thứ tự; Q7 = 1 chuỗi trong hero; Q8 mặc định Chrome/Safari/Firefox 2 bản gần nhất |
 | R7 | Deploy bị kích hoạt sớm | Cao về quy trình | T9 chỉ tạo file; chạy workflow chỉ sau chữ "Duyệt" ở GATE 2 |
-| R8 | File trong workspace bị nhiều tác nhân sửa chồng (đã xảy ra nhiều lần) | Trung bình | Chốt bản trên `main` sau mỗi commit; trước khi ghi luôn đọc SHA mới nhất; mỗi file một chủ |
+| R8 | File trong workspace bị tác nhân khác ghi đè | Trung bình | Chốt bản trên `main` sau mỗi commit; đọc SHA mới nhất trước khi ghi; mỗi file một chủ theo notice |
+| R9 | Nội dung trên trang trôi lệch so với `docs/content.md`, hoặc CodeReader tự viết text ngoài file | Trung bình | T3 ghi nguồn duy nhất = `docs/content.md`; T3 phụ thuộc P6; test đối chiếu mọi chuỗi với content.md; sửa nội dung phải qua Analyst + Chief |
 
-## 5. Rollback
+## 6. Việc cần chốt (chờ user/Chief)
+
+| # | Việc | Ai chốt | Ảnh hưởng |
+|---|---|---|---|
+| C1 | **Q7**: ngày hiển thị chỉ dương lịch hay thêm âm lịch ("Mùng 1 tháng Giêng") | user | 1 chuỗi trong hero (T3) |
+| C2 | **Q2 làm rõ**: nguyên văn "2, Tết âm lịch vn" — suy ra Q2(a) không thương hiệu. Nếu ý user là Q2(c) (có tên hiển thị) thì hero/footer phải thêm tên trang | user | Nội dung hero/footer T3 |
+| C3 | ~~Đánh số AC~~ — **đã xong**: spec `adeab03` dùng **AC10** cho đếm ngược; plan bỏ dòng "AC màu" riêng | Chief | Hết xung đột số hiệu |
+| C4 | **Q6**: deadline mong muốn | user | Thứ tự task |
+| C5 | **Q8**: trình duyệt tối thiểu | user | Target build ở T1 (mặc định: Chrome/Safari/Firefox 2 bản gần nhất) |
+
+## 7. Rollback
 
 - Chưa deploy ⇒ rollback = không merge, xoá branch, không bật Pages.
 - Sau deploy ⇒ Pages giữ bản build trước; rollback = revert commit trên `main` rồi chạy lại workflow.
 - Không DB/migration ⇒ không có rollback dữ liệu.
 
-## 6. Khi nào plan được coi là CHỐT
+## 8. Khi nào plan này được coi là CHỐT
 
-Khi: (1) user duyệt thay đổi phạm vi deploy (P3), (2) user duyệt plan ở GATE 1c (P4) — Architect thêm label `arch-approved` vào Issue #1, CodeReader bắt đầu T1. Deploy thật vẫn phải chờ chữ **"Duyệt"** ở GATE 2 (P5).
+Khi có đủ: (1) user trả lời **Q6/Q7/Q8** (và làm rõ C2), (2) user duyệt plan ở GATE 1c (P4) **và duyệt `docs/content.md` (P6)** — lúc đó Architect thêm label `arch-approved` vào Issue #1 và CodeReader bắt đầu T1. Deploy thật vẫn phải chờ chữ **"Duyệt"** ở GATE 2 (P5).
