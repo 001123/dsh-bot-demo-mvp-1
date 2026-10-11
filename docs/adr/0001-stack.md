@@ -123,7 +123,7 @@ Q4–Q8 không đổi kiến trúc nên chỉ hỏi–đáp, không cần thành
 ### Hệ quả kỹ thuật của Q4 và Q5 (không đổi PA đã chốt)
 
 - **Q4 = có đếm ngược** (đồng ý với CodeReader): làm bằng JS/island tĩnh tính từ `Date` phía client, **không** gọi API/backend (spec §5 out-of-scope). Hệ quả: AC6 siết (test console cả trước và sau khi đồng hồ tick); AC8 vẫn đạt vì nội dung chính nằm trong HTML, chỉ giá trị "còn X ngày" do JS điền; nên có fallback text tĩnh khi JS tắt. Đây là 1 task riêng trong `docs/plan.md`.
-- **Q5 = cần URL công khai**: đã chọn GitHub Pages ở GATE 1b. Deploy thật vẫn phải qua GATE 2 (chữ "Duyệt" của user); ADR này không tự cho phép deploy. Điều kiện tiên quyết là mục 7.3 (Pages cho repo private).
+- **Q5 = cần URL công khai**: đã chọn GitHub Pages ở GATE 1b. Deploy thật vẫn phải qua GATE 2 (chữ "Duyệt" của user); ADR này không tự cho phép deploy. Điều kiện tiên quyết là mục 7.3 (Pages cho repo private → đã chốt repo public).
 - Nếu user chọn Q4 = có, phần AC bổ sung do Analyst soạn và Chief push vào spec **trước** khi tôi chốt `docs/plan.md`.
 
 ## 5. Hệ quả nếu chọn PA1 (đã bị loại — giữ lại làm dấu vết)
@@ -149,12 +149,13 @@ Q4–Q8 không đổi kiến trúc nên chỉ hỏi–đáp, không cần thành
 - **Diễn giải (không thêm bớt)**: PA3 (Astro) + Tailwind CSS cho front-end + Astro Starlight + deploy lên GitHub Pages.
 - **Đối chiếu khuyến nghị**: Architect khuyến nghị PA1; user chọn PA3 kèm 2 bổ sung. PA1/PA2 bị loại theo lựa chọn của user, **không** theo khuyến nghị của Architect. Quyết định thuộc user.
 - **Điểm còn mở (cần user xác nhận)**: giữ Starlight hay dùng Astro "trơn" (xem mục 7.1 — Starlight là theme tài liệu, không phải theme landing page).
+- **Đã giải quyết (2026-10-11, sau GATE 1b)**: user xác nhận **giữ Starlight** và **đổi repo sang public** để dùng GitHub Pages (không cần Pro/Netlify). Việc đổi visibility là thao tác thủ công của user trên GitHub Settings; ADR không tự đổi.
 
 ## 7. Hệ quả của lựa chọn này
 
 1. **Starlight là theme tài liệu, không phải theme landing page.** Để dùng cho 1 trang Tết phải: dùng `template: splash`, tắt sidebar/pagination/"Edit page"/search, override theme. Các thành phần mặc định của Starlight đều không cần cho spec này ⇒ **nhiều việc hơn** phương án "Astro + Tailwind trơn", dù vẫn đạt AC1–AC9.
 2. **Tailwind không hoà sẵn với Starlight.** Starlight dùng CSS custom property/token riêng; class Tailwind không áp vào component Starlight. Cần chốt quy ước: Tailwind cho phần page tự viết, Starlight chỉ override qua CSS variable.
-3. **GitHub Pages + repo private (RỦI RO CẦN USER CHỐT).** Pages cho repo private cần GitHub Pro/Team/Enterprise. Nếu account đang Free, 3 lựa chọn: (a) chuyển repo sang public, (b) dùng account có Pro, (c) deploy bằng Netlify/Cloudflare Pages (hỗ trợ repo private, free). Đây là điều kiện tiên quyết của AC1 (URL công khai).
+3. **GitHub Pages + repo private (ĐÃ GIẢI QUYẾT 2026-10-11).** Pages cho repo private cần GitHub Pro/Team/Enterprise. User chốt **đổi repo sang public**, nên không cần Pro và không cần chuyển Netlify/Cloudflare. Thao tác đổi visibility do user tự làm trên GitHub (Settings → General → Danger Zone → Change visibility); không Bot nào tự đổi. Điều kiện tiên quyết của AC1 (URL công khai) vì vậy đã có đường: Pages + repo public.
 4. **Base path bắt buộc.** Pages phục vụ ở `/dsh-bot-demo-mvp-1/` ⇒ phải khai `site` + `base` trong `astro.config.mjs`. Quên ⇒ CSS/ảnh 404 ⇒ **vi phạm AC5**.
 5. **Q4 (đếm ngược) nếu có**: viết dạng island `client:load`, giữ JS tối thiểu để không phá AC9/AC6.
 6. **AC8 vẫn đạt**: Astro render tĩnh, nội dung nằm trong HTML.
