@@ -3,8 +3,8 @@
 - Trạng thái: **APPROVED — user duyệt ở GATE 1a ngày 2026-10-11**
 - Người viết: Analyst (BA)
 - Yêu cầu gốc (nguyên văn): "Làm 1 trang landing đơn giản nói về tết âm lịch 2027"
-- Cập nhật: 2026-10-11 (bổ sung đáp án Q1–Q5; chi tiết hoá AC10 theo đề xuất của Analyst + CodeReader)
-- Lưu ý: user đã trả lời **Q1(a), Q2(a), Q3(a), Q4 (có đếm ngược), Q5**; **Q6, Q7, Q8 chưa trả lời** (xem mục 6). Các câu chưa trả lời cần user chốt, không tự quyết.
+- Cập nhật: 2026-10-11 (bổ sung đáp án Q1–Q5; chi tiết hoá AC10 theo đề xuất của Analyst + CodeReader; **user xác nhận lại Q2(a)**)
+- Lưu ý: user đã trả lời **Q1(a), Q2(a) (đã xác nhận lại 2026-10-11), Q3(a), Q4 (có đếm ngược), Q5**; **Q6, Q7, Q8 chưa trả lời** (xem mục 6). Các câu chưa trả lời cần user chốt, không tự quyết.
 - Issue theo dõi: https://github.com/001123/dsh-bot-demo-mvp-1/issues/1
 
 ## 1. Bối cảnh
@@ -59,7 +59,7 @@ Mốc dữ liệu cần hiển thị đúng (đã kiểm chứng, nguồn: [Tu�
 ## 6. Câu hỏi mở (cần user trả lời trước khi chốt)
 
 - Q1: **ĐÃ TRẢ LỜI (user, 2026-10-11): (a) lời chúc Tết cá nhân/tổ chức.** Nguyên văn: "1, Chúc Tết Happier". Hệ quả: hero là lời chúc Tết; không cần CTA dẫn ra ngoài — nếu có link thì phải là URL thật (AC7 cấm "#" rỗng).
-- Q2: **ĐÃ TRẢ LỜI (user, 2026-10-11): (a) không có thương hiệu/logo cần hiển thị — theme đỏ–vàng truyền thống.** Nguyên văn: "2, Tết âm lịch vn". Làm rõ với user: "Happier" là tên/chủ đề của trang, không phải thương hiệu có logo/bảng màu riêng ⇒ không phát sinh ràng buộc asset; R3 không áp cho logo. **Cần user xác nhận lại**: câu trả lời user gõ là "2, ...", chữ (a)/(c) do Analyst suy ra — nếu ý user là (c) (có tên hiển thị) thì hero/footer phải thêm tên trang.
+- Q2: **ĐÃ TRẢ LỜI (user, 2026-10-11): (a) không có thương hiệu/logo cần hiển thị — theme đỏ–vàng truyền thống.** Nguyên văn: "2, Tết âm lịch vn". Làm rõ với user: "Happier" là tên/chủ đề của trang, không phải thương hiệu có logo/bảng màu riêng ⇒ không phát sinh ràng buộc asset; R3 không áp cho logo. **ĐÃ XÁC NHẬN LẠI (user, 2026-10-11, group chat "Demo MVP 1"): nguyên văn "ĐÚNG"** ⇒ chốt (a): không logo, theme đỏ–vàng; "Happier" chỉ là tên/chủ đề trang, không phải thương hiệu.
 - Q3: **ĐÃ TRẢ LỜI (user, 2026-10-11): (a) Analyst/team viết nội dung mẫu tiếng Việt; user không gửi text/ảnh.** Nguyên văn: "3, Tết 2027 Happier" + chọn Q3(a). Hệ quả: nội dung không phải điều kiện chờ user; bản mẫu trình user duyệt ở GATE 1c.
 - Q4: **ĐÃ TRẢ LỜI (user, 2026-10-11): CÓ đồng hồ đếm ngược tới mùng 1 Tết (dạng "còn X ngày").** Nguyên văn: "q4 có đồng hồ đếm ngược". ⇒ AC10 (mục 3) và task T7 trong plan ở trạng thái BẬT.
 - Q5: **ĐÃ TRẢ LỜI (user, 2026-10-11): cần URL công khai — deploy bằng GitHub Pages.** Nguyên văn: "Dùng astro starlight + đẩy lên github pages, fe thì dùng tailwindcss" (ghi tại docs/adr/0001-stack.md).
@@ -69,7 +69,7 @@ Mốc dữ liệu cần hiển thị đúng (đã kiểm chứng, nguồn: [Tu�
 
 ## 7. Rủi ro
 
-- R1: Yêu cầu còn mơ hồ (mục đích, thương hiệu, nội dung) — đã xử lý: Q1(a), Q2(a) (chờ xác nhận lại), Q3(a) chốt ngày 2026-10-11.
+- R1: Yêu cầu còn mơ hồ (mục đích, thương hiệu, nội dung) — đã xử lý: Q1(a), Q2(a) (đã xác nhận lại 2026-10-11), Q3(a) chốt ngày 2026-10-11.
 - R2: Ngày Tết có thể bị sai nếu lấy từ nguồn không kiểm chứng — đã kiểm chứng và ghi nguồn; nếu có nguồn chính thống khác thì cập nhật lại.
 - R3: Bản quyền hình ảnh Tết lấy từ internet — cần dùng ảnh tự tạo/ảnh có giấy phép, hoặc chỉ dùng CSS/hình vẽ.
 - R4: Phạm vi phình ra (thêm form, đếm ngược, đa ngôn ngữ) — mọi thứ ngoài mục 4 phải qua gate để user duyệt lại. **Lưu ý**: đếm ngược (AC10) đã được user yêu cầu ⇒ nay thuộc phạm vi, nhưng vẫn phải user duyệt khi duyệt plan ở GATE 1c vì là tiêu chí thêm sau baseline.
@@ -79,13 +79,14 @@ Mốc dữ liệu cần hiển thị đúng (đã kiểm chứng, nguồn: [Tu�
 ## 8. Gate
 
 - GATE 1a: **ĐÃ QUA** — user duyệt spec này ngày 2026-10-11 (qua Chief). Được phép chuyển sang bước thiết kế.
-- Bước tiếp theo: Architect hoàn thiện `docs/plan.md`; user duyệt plan + nội dung ở GATE 1c. Q1(a), Q2(a), Q3(a), Q4 (có đếm ngược), Q5 đã chốt ngày 2026-10-11; **Q6, Q7, Q8 chưa trả lời**; **Q2 cần xác nhận lại** (chữ a/c là suy ra).
+- Bước tiếp theo: Architect hoàn thiện `docs/plan.md`; user duyệt plan + nội dung ở GATE 1c. Q1(a), Q2(a), Q3(a), Q4 (có đếm ngược), Q5 đã chốt ngày 2026-10-11; **Q6, Q7, Q8 chưa trả lời**; **Q2 đã được user xác nhận lại ngày 2026-10-11**.
 - **Thay đổi phạm vi cần user duyệt lại ở GATE 1c:** (1) deploy URL công khai (GitHub Pages) từ out-of-scope sang in-scope; (2) AC10 (đếm ngược) là tiêu chí mới thêm sau baseline GATE 1a; (3) chi tiết hoá AC10 (mốc cố định UTC+7, làm tròn lên, hành vi sau mốc, fallback `<noscript>`) — **không đổi tiêu chí, chỉ làm rõ**.
 - **AC11 (đề xuất, CHƯA đưa vào spec):** Analyst đề xuất một AC kiểm được màu — "hero dùng nền đỏ hoặc vàng truyền thống, chữ trên nền đạt tương phản ≥ 4,5:1". Đây sẽ là **tiêu chí mới**, nên phải do user quyết; chưa có quyết định thì mặc định **không thêm**, theme đỏ–vàng (Q2a) được kiểm bằng mắt ở bước review.
 
 ## 9. Nguồn các câu trả lời
 
 - Q1(a), Q2(a), Q3(a), Q4: user trả lời qua chat Analyst (BA), 2026-10-11; Analyst báo nguyên văn cho Chief và Chief push vào spec này.
+- Q2(a) xác nhận lại: user gõ nguyên văn "ĐÚNG", group chat "Demo MVP 1", 2026-10-11; Chief push bản cập nhật này.
 - Q5 + stack: user trả lời qua chat Architect, 2026-10-11 08:57 (anchor `#331`), ghi tại `docs/adr/0001-stack.md` mục 0.
 - Chi tiết hoá AC10 (mốc, làm tròn, hành vi sau mốc, fallback): do **Analyst** soạn (đề xuất làm tròn lên) và **CodeReader** nêu 4 điểm kỹ thuật (mốc `2027-02-06T00:00:00+07:00`, dừng tick sau mốc, `<noscript>` + giữ độ cao, test 4 thời điểm); Chief tổng hợp và push. Không thêm tiêu chí mới.
 - Quyết định triển khai (Astro thường thay Starlight; repo public) ghi tại `docs/adr/0001-stack.md` + `docs/adr/0002-bo-starlight-va-repo-public.md`, không ghi trong spec.
