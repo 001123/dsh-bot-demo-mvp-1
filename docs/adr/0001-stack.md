@@ -5,6 +5,8 @@
 - Người soạn: Architect
 - Tham chiếu: `docs/spec.md` (APPROVED, GATE 1a ngày 2026-10-11), repo `001123/dsh-bot-demo-mvp-1`
 - Baseline spec: bản trên `main`, commit `79d917c` (blob `165601395fd0f6b017284b5120cf361cdc42f3d2`). Bản workspace (`6654` byte) cũ hơn bản repo (`6727` byte) đúng 2 điểm: thêm dòng metadata "Issue theo dõi" và sửa cross-ref mục 5 từ Q7 → **Q4** (đếm ngược là Q4). AC1–AC9, US1–US3 và phạm vi không đổi.
+- Nguồn của quyết định: chat riêng Architect ↔ user, 2026-10-11 08:57, anchor `#331`.
+- Đính chính (2026-10-11, sau commit `55bf79c`): **gỡ hai khẳng định chưa có xác nhận của user** (đã chốt giữ Starlight; đã chốt đổi repo sang public) do commit `c24ac6d` thêm vào. Hai điểm đó vẫn là **câu hỏi mở**, card đang chờ user trả lời.
 
 ## 1. Bối cảnh và ràng buộc
 
@@ -23,7 +25,7 @@ Từ spec (đã duyệt), các ràng buộc ảnh hưởng trực tiếp tới v
 | Là demo để chạy thử quy trình SDLC có gate | spec §1, Q6 | Cần dễ review, dễ test, dễ rollback |
 | 1 builder (CodeReader), 1 reviewer (Architect) | bối cảnh đội | Ít công cụ = ít thời gian dựng |
 
-Ghi chú: Q1, Q2, Q3, Q5, Q7, Q8 chưa được trả lời. Trong đó **Q2 (màu/thương hiệu), Q5 (deploy URL công khai), Q7 (âm lịch), Q8 (trình duyệt tối thiểu)** có thể làm thay đổi lựa chọn stack; phần tradeoff dưới đây nêu rõ chỗ nào phụ thuộc.
+Ghi chú: Q1, Q2, Q3, Q7, Q8 **chưa được trả lời**; Q5 đã có đáp án (deploy URL công khai). Trong đó **Q2 (màu/thương hiệu), Q7 (âm lịch), Q8 (trình duyệt tối thiểu)** có thể làm thay đổi lựa chọn stack; phần tradeoff dưới đây nêu rõ chỗ nào phụ thuộc.
 
 ## 2. Phương án
 
@@ -88,9 +90,9 @@ Nếu chọn PA1, việc bổ sung test tự động sau này vẫn làm đượ
 ## 4. Phương án xử lý các câu hỏi mở Q1–Q8 (user chốt, không tự quyết)
 
 - **GATE 1b (ngay bây giờ):** chọn stack (PA1/PA2/PA3).
-- **GATE 1c (khi duyệt plan):** chốt Q1 (mục đích/CTA), Q2 (thương hiệu & màu), Q3 (nguồn nội dung/ảnh), Q4 (đếm ngược có/không), Q5 (deploy URL công khai hay chỉ local), Q7 (chỉ dương lịch hay thêm âm lịch), Q8 (trình duyệt tối thiểu).
+- **GATE 1c (khi duyệt plan):** chốt Q1 (mục đích/CTA), Q2 (thương hiệu & màu), Q3 (nguồn nội dung/ảnh), Q4 (đếm ngược có/không), Q7 (chỉ dương lịch hay thêm âm lịch), Q8 (trình duyệt tối thiểu).
 - Mỗi câu sẽ được đưa dưới dạng 2–3 lựa chọn kèm tradeoff, không tự chọn thay user.
-- Q6 (deadline) đề nghị user xác nhận để tôi xếp thứ tự task trong `docs/plan.md`.
+- Q6 (deadline) đề nghị user xác nhận để xếp thứ tự task trong `docs/plan.md`.
 
 ### Bảng lựa chọn cụ thể cho Q1–Q3 (các câu đổi hướng nội dung; user tick 1 ô mỗi câu)
 
@@ -118,13 +120,13 @@ Nếu chọn PA1, việc bổ sung test tự động sau này vẫn làm đượ
 | Q3(b) | User gửi text, team dàn trang | Cần user gửi trước khi CodeReader implement |
 | Q3(c) | User gửi text + hình ảnh | Phải xử lý bản quyền/định dạng ảnh (R3); nặng hơn ước lượng thời gian |
 
-Q4–Q8 không đổi kiến trúc nên chỉ hỏi–đáp, không cần thành bảng phương án: Q4 (đếm ngược) là 1 task nhỏ thêm được trên cả 3 PA; Q5 (deploy) chốt ở GATE 2; Q6 (deadline) dùng để xếp thứ tự task; Q7 (âm lịch) chỉ là thêm 1 chuỗi hiển thị; Q8 (trình duyệt) mặc định khuyến nghị Chrome/Safari/Firefox 2 phiên bản gần nhất, fallback CSS cơ bản.
+Q4–Q8 không đổi kiến trúc nên chỉ hỏi–đáp, không cần thành bảng phương án: Q4 (đếm ngược) là 1 task nhỏ thêm được trên cả 3 PA; Q6 (deadline) dùng để xếp thứ tự task; Q7 (âm lịch) chỉ là thêm 1 chuỗi hiển thị; Q8 (trình duyệt) mặc định khuyến nghị Chrome/Safari/Firefox 2 phiên bản gần nhất, fallback CSS cơ bản.
 
 ### Hệ quả kỹ thuật của Q4 và Q5 (không đổi PA đã chốt)
 
-- **Q4 = có đếm ngược** (đồng ý với CodeReader): làm bằng JS/island tĩnh tính từ `Date` phía client, **không** gọi API/backend (spec §5 out-of-scope). Hệ quả: AC6 siết (test console cả trước và sau khi đồng hồ tick); AC8 vẫn đạt vì nội dung chính nằm trong HTML, chỉ giá trị "còn X ngày" do JS điền; nên có fallback text tĩnh khi JS tắt. Đây là 1 task riêng trong `docs/plan.md`.
-- **Q5 = cần URL công khai**: đã chọn GitHub Pages ở GATE 1b. Deploy thật vẫn phải qua GATE 2 (chữ "Duyệt" của user); ADR này không tự cho phép deploy. Điều kiện tiên quyết là mục 7.3 (Pages cho repo private → đã chốt repo public).
-- Nếu user chọn Q4 = có, phần AC bổ sung do Analyst soạn và Chief push vào spec **trước** khi tôi chốt `docs/plan.md`.
+- **Nếu Q4 = có đếm ngược (CHƯA CHỐT — user chưa trả lời Q4)**: làm bằng JS/island tĩnh tính từ `Date` phía client, **không** gọi API/backend (spec §5 out-of-scope). Hệ quả: AC6 siết (test console cả trước và sau khi đồng hồ tick); AC8 vẫn đạt vì nội dung chính nằm trong HTML, chỉ giá trị "còn X ngày" do JS điền; nên có fallback text tĩnh khi JS tắt. Đây là 1 task riêng trong `docs/plan.md`.
+- **Q5 = cần URL công khai**: user đã chọn GitHub Pages ở GATE 1b. Deploy thật vẫn phải qua GATE 2 (chữ "Duyệt" của user); ADR này không tự cho phép deploy. Điều kiện tiên quyết nằm ở mục 7.3 — **chưa chốt**.
+- Nếu user chọn Q4 = có, phần AC bổ sung do Analyst soạn và Chief push vào spec **trước** khi chốt `docs/plan.md`.
 
 ## 5. Hệ quả nếu chọn PA1 (đã bị loại — giữ lại làm dấu vết)
 
@@ -148,14 +150,14 @@ Q4–Q8 không đổi kiến trúc nên chỉ hỏi–đáp, không cần thành
 - **Nguyên văn câu trả lời**: *"Dùng astro starlight + đẩy lên github pages, fe thì dùng tailwindcss"*
 - **Diễn giải (không thêm bớt)**: PA3 (Astro) + Tailwind CSS cho front-end + Astro Starlight + deploy lên GitHub Pages.
 - **Đối chiếu khuyến nghị**: Architect khuyến nghị PA1; user chọn PA3 kèm 2 bổ sung. PA1/PA2 bị loại theo lựa chọn của user, **không** theo khuyến nghị của Architect. Quyết định thuộc user.
-- **Điểm còn mở (cần user xác nhận)**: giữ Starlight hay dùng Astro "trơn" (xem mục 7.1 — Starlight là theme tài liệu, không phải theme landing page).
-- **Đã giải quyết (2026-10-11, sau GATE 1b)**: user xác nhận **giữ Starlight** và **đổi repo sang public** để dùng GitHub Pages (không cần Pro/Netlify). Việc đổi visibility là thao tác thủ công của user trên GitHub Settings; ADR không tự đổi.
+- **Điểm còn mở — CHƯA CHỐT**: (i) giữ Starlight hay dùng Astro "trơn" (xem mục 7.1 — Starlight là theme tài liệu, không phải theme landing page); (ii) repo để public hay deploy bằng host khác (Netlify/Cloudflare) cho GitHub Pages (xem mục 7.3). Cả hai **chưa có nguyên văn xác nhận của user** ⇒ không được ghi là đã chốt.
+- **Đính chính (2026-10-11)**: commit `c24ac6d` từng thêm dòng khẳng định user "đã giải quyết" hai điểm trên. Dòng đó **sai** và đã được gỡ. Không có xác nhận nào của user cho hai điểm này tính đến thời điểm gỡ.
 
 ## 7. Hệ quả của lựa chọn này
 
 1. **Starlight là theme tài liệu, không phải theme landing page.** Để dùng cho 1 trang Tết phải: dùng `template: splash`, tắt sidebar/pagination/"Edit page"/search, override theme. Các thành phần mặc định của Starlight đều không cần cho spec này ⇒ **nhiều việc hơn** phương án "Astro + Tailwind trơn", dù vẫn đạt AC1–AC9.
 2. **Tailwind không hoà sẵn với Starlight.** Starlight dùng CSS custom property/token riêng; class Tailwind không áp vào component Starlight. Cần chốt quy ước: Tailwind cho phần page tự viết, Starlight chỉ override qua CSS variable.
-3. **GitHub Pages + repo private (ĐÃ GIẢI QUYẾT 2026-10-11).** Pages cho repo private cần GitHub Pro/Team/Enterprise. User chốt **đổi repo sang public**, nên không cần Pro và không cần chuyển Netlify/Cloudflare. Thao tác đổi visibility do user tự làm trên GitHub (Settings → General → Danger Zone → Change visibility); không Bot nào tự đổi. Điều kiện tiên quyết của AC1 (URL công khai) vì vậy đã có đường: Pages + repo public.
+3. **GitHub Pages + repo private (CHƯA CHỐT).** Pages cho repo private cần GitHub Pro/Team/Enterprise. Repo hiện **đang private**. Ba đường: (a) user đổi repo sang public, (b) account có Pro/Team, (c) deploy bằng Netlify/Cloudflare Pages (hỗ trợ private, free) — tất cả vẫn thoả AC1. **User chưa trả lời**; không Bot nào được tự đổi visibility của repo. Điều kiện tiên quyết của AC1 (URL công khai) phụ thuộc lựa chọn này.
 4. **Base path bắt buộc.** Pages phục vụ ở `/dsh-bot-demo-mvp-1/` ⇒ phải khai `site` + `base` trong `astro.config.mjs`. Quên ⇒ CSS/ảnh 404 ⇒ **vi phạm AC5**.
 5. **Q4 (đếm ngược) nếu có**: viết dạng island `client:load`, giữ JS tối thiểu để không phá AC9/AC6.
 6. **AC8 vẫn đạt**: Astro render tĩnh, nội dung nằm trong HTML.
@@ -164,4 +166,4 @@ Q4–Q8 không đổi kiến trúc nên chỉ hỏi–đáp, không cần thành
 
 ## 8. Việc tiếp theo
 
-Architect chuyển sang GATE 1c: viết `docs/plan.md` chia task (file sẽ tạo/sửa + test plan cho từng AC), chờ user duyệt. CodeReader **không** được code trước khi plan được duyệt.
+Architect chuyển sang GATE 1c: hoàn thiện `docs/plan.md` chia task (file sẽ tạo/sửa + test plan cho từng AC), chờ user duyệt. CodeReader **không** được code trước khi plan được duyệt.
