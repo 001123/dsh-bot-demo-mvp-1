@@ -3,7 +3,7 @@
 - Trạng thái: **APPROVED — user duyệt ở GATE 1a ngày 2026-10-11**
 - Người viết: Analyst (BA)
 - Yêu cầu gốc (nguyên văn): "Làm 1 trang landing đơn giản nói về tết âm lịch 2027"
-- Cập nhật: 2026-10-11 (bổ sung đáp án Q1–Q5; chi tiết hoá AC10 theo đề xuất của Analyst + CodeReader; **user xác nhận lại Q2(a)**)
+- Cập nhật: 2026-10-11 (bổ sung đáp án Q1–Q5; chi tiết hoá AC10 theo đề xuất của Analyst + CodeReader; **user xác nhận lại Q2(a)**; **user chốt không thêm AC11**)
 - Lưu ý: user đã trả lời **Q1(a), Q2(a) (đã xác nhận lại 2026-10-11), Q3(a), Q4 (có đếm ngược), Q5**; **Q6, Q7, Q8 chưa trả lời** (xem mục 6). Các câu chưa trả lời cần user chốt, không tự quyết.
 - Issue theo dõi: https://github.com/001123/dsh-bot-demo-mvp-1/issues/1
 
@@ -81,12 +81,13 @@ Mốc dữ liệu cần hiển thị đúng (đã kiểm chứng, nguồn: [Tu�
 - GATE 1a: **ĐÃ QUA** — user duyệt spec này ngày 2026-10-11 (qua Chief). Được phép chuyển sang bước thiết kế.
 - Bước tiếp theo: Architect hoàn thiện `docs/plan.md`; user duyệt plan + nội dung ở GATE 1c. Q1(a), Q2(a), Q3(a), Q4 (có đếm ngược), Q5 đã chốt ngày 2026-10-11; **Q6, Q7, Q8 chưa trả lời**; **Q2 đã được user xác nhận lại ngày 2026-10-11**.
 - **Thay đổi phạm vi cần user duyệt lại ở GATE 1c:** (1) deploy URL công khai (GitHub Pages) từ out-of-scope sang in-scope; (2) AC10 (đếm ngược) là tiêu chí mới thêm sau baseline GATE 1a; (3) chi tiết hoá AC10 (mốc cố định UTC+7, làm tròn lên, hành vi sau mốc, fallback `<noscript>`) — **không đổi tiêu chí, chỉ làm rõ**.
-- **AC11 (đề xuất, CHƯA đưa vào spec):** Analyst đề xuất một AC kiểm được màu — "hero dùng nền đỏ hoặc vàng truyền thống, chữ trên nền đạt tương phản ≥ 4,5:1". Đây sẽ là **tiêu chí mới**, nên phải do user quyết; chưa có quyết định thì mặc định **không thêm**, theme đỏ–vàng (Q2a) được kiểm bằng mắt ở bước review.
+- **AC11 (đề xuất của Analyst — ĐÃ CÓ QUYẾT ĐỊNH: KHÔNG THÊM):** đề xuất là một AC kiểm được màu — "hero dùng nền đỏ hoặc vàng truyền thống, chữ trên nền đạt tương phản ≥ 4,5:1". **User chốt ngày 2026-10-11, group chat "Demo MVP 1" (nguyên văn: "ac11 chưa cần") ⇒ AC11 KHÔNG được thêm vào spec.** Theme đỏ–vàng (Q2a) vẫn được kiểm bằng mắt ở bước review. Muốn thêm sau này thì phải qua gate mới.
 
 ## 9. Nguồn các câu trả lời
 
 - Q1(a), Q2(a), Q3(a), Q4: user trả lời qua chat Analyst (BA), 2026-10-11; Analyst báo nguyên văn cho Chief và Chief push vào spec này.
 - Q2(a) xác nhận lại: user gõ nguyên văn "ĐÚNG", group chat "Demo MVP 1", 2026-10-11; Chief push bản cập nhật này.
+- AC11: user gõ nguyên văn "ac11 chưa cần", group chat "Demo MVP 1", 2026-10-11 ⇒ không thêm AC11; Chief push.
 - Q5 + stack: user trả lời qua chat Architect, 2026-10-11 08:57 (anchor `#331`), ghi tại `docs/adr/0001-stack.md` mục 0.
 - Chi tiết hoá AC10 (mốc, làm tròn, hành vi sau mốc, fallback): do **Analyst** soạn (đề xuất làm tròn lên) và **CodeReader** nêu 4 điểm kỹ thuật (mốc `2027-02-06T00:00:00+07:00`, dừng tick sau mốc, `<noscript>` + giữ độ cao, test 4 thời điểm); Chief tổng hợp và push. Không thêm tiêu chí mới.
 - Quyết định triển khai (Astro thường thay Starlight; repo public) ghi tại `docs/adr/0001-stack.md` + `docs/adr/0002-bo-starlight-va-repo-public.md`, không ghi trong spec.
