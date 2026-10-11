@@ -1,0 +1,5 @@
+@import "tailwindcss";
+@config "../../tailwind.config.mjs";
+
+/* Page-level styling is built on the palette declared in tailwind.config.mjs.
+   Layout and component rules (hero, content blocks, countdown) are added in T2–T7. */

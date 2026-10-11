@@ -1,0 +1,21 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# test output
+playwright-report/
+test-results/
+blob-report/
+.playwright/
+
+# logs and editor files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+*.local
+.vscode/
+.idea/
