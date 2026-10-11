@@ -3,7 +3,13 @@ import { defineConfig } from '@playwright/test'
 // Pages serves this project under a base path (astro.config.mjs `base`), so every URL the
 // browser touches carries that prefix — testing at the root would hide a missing base
 // (risk R1, and the AC5 assertion form).
-const PORT = 4321
+//
+// PORT: deliberately NOT Astro's default 4321. Several Bots share this workspace and each
+// may have its own checkout with `astro preview` running (review-t1/, review-code/), and
+// that default port is first-come-first-served. A test that lands on someone else's server
+// silently validates a different revision — during T7 that produced six failures against a
+// checkout that had no countdown at all. Override with E2E_PORT when needed.
+const PORT = Number(process.env.E2E_PORT ?? 4399)
 const BASE = '/dsh-bot-demo-mvp-1'
 const ORIGIN = `http://localhost:${PORT}`
 
@@ -23,12 +29,13 @@ export default defineConfig({
   use: {
     baseURL: ORIGIN,
   },
-  // A fresh build every run: `astro preview` serves `dist/`, and a stale `dist/` would
-  // silently validate the previous revision.
+  // `reuseExistingServer: false` on purpose: if our own port is occupied we want a loud
+  // failure, never a quiet run against a foreign server.
+  // A fresh build every run, because `astro preview` serves `dist/`.
   webServer: {
-    command: 'npm run build && npm run preview',
+    command: `npm run build && npm run preview -- --port ${PORT}`,
     url: `${ORIGIN}${BASE}/`,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
     timeout: 120_000,
   },
 })

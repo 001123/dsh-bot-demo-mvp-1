@@ -23,3 +23,6 @@ yarn-error.log*
 # secrets — this repository is public (plan §1)
 .env
 .env.*
+
+# another Bot's review checkout living inside this shared workspace; never part of this repo
+review-*/
