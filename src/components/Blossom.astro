@@ -1,0 +1,33 @@
+---
+// T4 — decorative blossom divider, drawn inline as SVG.
+//
+// Deliberately no raster image and no <img>: docs/content.md rules out artwork downloaded
+// from the internet (spec R3), so AC5 is met on branch (b) — "AC5 đạt do không dùng ảnh
+// raster". `aria-hidden` is correct because the divider carries no information.
+interface Props {
+  class?: string
+}
+
+const { class: className } = Astro.props
+---
+
+<svg
+  class={className}
+  viewBox="0 0 120 32"
+  width="120"
+  height="32"
+  role="presentation"
+  aria-hidden="true"
+  focusable="false"
+>
+  <line x1="4" y1="16" x2="42" y2="16" stroke="#f2c14e" stroke-width="1.5" />
+  <line x1="78" y1="16" x2="116" y2="16" stroke="#f2c14e" stroke-width="1.5" />
+  <g fill="#f2c14e">
+    <circle cx="60" cy="9" r="5.5" />
+    <circle cx="68.5" cy="14.5" r="5.5" />
+    <circle cx="65" cy="24" r="5.5" />
+    <circle cx="55" cy="24" r="5.5" />
+    <circle cx="51.5" cy="14.5" r="5.5" />
+  </g>
+  <circle cx="60" cy="16.5" r="3.5" fill="#ffd97a" />
+</svg>
