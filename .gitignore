@@ -19,3 +19,7 @@ yarn-error.log*
 *.local
 .vscode/
 .idea/
+
+# secrets — this repository is public (plan §1)
+.env
+.env.*

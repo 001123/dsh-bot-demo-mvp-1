@@ -11,6 +11,11 @@ interface Props {
 }
 
 const { title = site.title, description = site.description } = Astro.props
+
+// The page is served under `base` (/dsh-bot-demo-mvp-1), so the icon needs that prefix.
+// BASE_URL may or may not carry a trailing slash, so normalise before joining.
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
+const faviconHref = `${base}/favicon.svg`
 ---
 
 <!doctype html>
@@ -20,6 +25,9 @@ const { title = site.title, description = site.description } = Astro.props
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <!-- Self-drawn SVG icon (T2). Declaring it means the browser does not fall back to
+         requesting /favicon.ico, which would 404 (AC5, "icon 404"). -->
+    <link rel="icon" type="image/svg+xml" href={faviconHref} />
   </head>
   <body class="bg-tet-cream text-tet-ink antialiased">
     <div class="flex min-h-screen flex-col">
