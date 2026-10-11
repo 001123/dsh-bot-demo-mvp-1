@@ -100,6 +100,16 @@ test('AC5 — every URL the page references answers < 400, and no <img> lacks al
   const references = new Set<string>()
   for (const match of html.matchAll(/(?:href|src)="([^"]+)"/g)) references.add(match[1])
 
+  // `srcset` is a comma-separated candidate list ("img-2x.png 2x, img-1x.png 1x"): take the
+  // URL part of each candidate. The page ships no raster image today, so this is future-proofing —
+  // adding a responsive image later must not slip past the AC5 check.
+  for (const match of html.matchAll(/srcset="([^"]+)"/g)) {
+    for (const candidate of match[1].split(',')) {
+      const url = candidate.trim().split(/\s+/)[0]
+      if (url !== '') references.add(url)
+    }
+  }
+
   // Stylesheets can reference assets too (background images, fonts).
   for (const sheet of html.matchAll(/href="([^"]+\.css)"/g)) {
     const css = await (await request.get(sheet[1])).text()
