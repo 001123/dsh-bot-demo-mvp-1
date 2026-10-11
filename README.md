@@ -5,8 +5,8 @@ Demo MVP 1 — SDLC gate walkthrough (Chief / Analyst / Architect / CodeReader)
 Landing page cho Tết Nguyên đán 2027 (Đinh Mùi) — trang tĩnh, một URL.
 
 Sản phẩm demo để chạy thử quy trình SDLC có gate. Baseline spec: `docs/spec.md` trên
-`main`, commit `bd3406c`, blob `75ecee11`. Kế hoạch thực thi: `docs/plan.md` bản 8,
-blob `c40bb6c3`. Chuỗi hiển thị trên trang: `docs/content.md` (blob `7d21a4d7`) —
+`main`, commit `bd3406c`, blob `75ecee11`. Kế hoạch thực thi: `docs/plan.md` bản 10,
+blob `7a7f52bd`. Chuỗi hiển thị trên trang: `docs/content.md` (blob `f750f977`) —
 **nguồn duy nhất**, không tự viết text ngoài file đó.
 
 ## Công nghệ
@@ -23,22 +23,28 @@ blob `c40bb6c3`. Chuỗi hiển thị trên trang: `docs/content.md` (blob `7d21
 ## Chạy local
 
 ```sh
-npm ci --include=dev
+npm install --include=dev
 npm run dev
 ```
 
-> **Vì sao có `--include=dev`:** `tailwindcss` và `@tailwindcss/vite` nằm ở
-> `devDependencies` (build tooling, không phải dependency runtime). npm tự bỏ qua
-> `devDependencies` khi biến môi trường `NODE_ENV=production` — và một số host dựng
-> sẵn biến đó. Khi đó `npm ci` trần sẽ cài thiếu Tailwind và `astro build` chết ngay:
+> **Vì sao `npm install` và vì sao có `--include=dev`:**
+>
+> 1. **Không có `package-lock.json` trong repo** — theo quyết định của user (`"1 dùng npm i"`,
+>    plan bản 10, P7). Vì vậy `npm ci` không dùng được ở đây; lệnh đúng là `npm install`.
+>    Hệ quả là **nợ kỹ thuật**: 3 dependency trực tiếp (`astro`, `tailwindcss`,
+>    `@tailwindcss/vite`) được **pin tuyệt đối**, nhưng dependency gián tiếp thì không
+>    (plan bản 10, rủi ro R3).
+> 2. `tailwindcss` và `@tailwindcss/vite` nằm ở `devDependencies` (build tooling, không phải
+>    dependency runtime). npm bỏ qua `devDependencies` khi `NODE_ENV=production`, và một số
+>    host dựng sẵn biến đó. Khi đó cài thiếu Tailwind và `astro build` chết ngay:
 >
 > ```
 > Cannot find module '@tailwindcss/vite' imported from '.../astro.config.mjs'
 > ```
 >
 > Bằng chứng đo trên host này (2026-10-11): `npm ci` → **không** có `node_modules/tailwindcss`
-> → build FAIL; `npm ci --include=dev` → build PASS. Trên CI không đặt `NODE_ENV=production`
-> thì `npm ci` trần vẫn đủ; thêm cờ này vô hại ở cả hai trường hợp.
+> → build FAIL; `npm install --include=dev` → build PASS. Trên CI không đặt `NODE_ENV=production`
+> thì `npm install` trần vẫn đủ; thêm cờ này vô hại ở cả hai trường hợp.
 
 ## Build và xem trước
 
@@ -56,3 +62,15 @@ http://localhost:4321/dsh-bot-demo-mvp-1/
 `site` và `base` được khai trong `astro.config.mjs`. Quên `base` ⇒ CSS/ảnh 404 trên
 Pages ⇒ vi phạm AC5. Cùng lý do đó, favicon được khai bằng đường dẫn có base:
 `/dsh-bot-demo-mvp-1/favicon.svg`.
+
+## Test
+
+```sh
+npx playwright install --with-deps chromium   # lần đầu trên máy mới
+npm run test:e2e
+```
+
+Test chạy trên port riêng (mặc định `4399`, đổi bằng `E2E_PORT`) và **không** tái sử dụng
+server đang chạy: workspace này được nhiều Bot dùng chung, mỗi Bot có thể có checkout riêng
+đang chạy `astro preview` ở port mặc định 4321, và một test trỏ nhầm vào đó sẽ kiểm định
+sai revision.

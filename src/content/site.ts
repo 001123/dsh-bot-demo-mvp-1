@@ -1,5 +1,5 @@
 // Every Vietnamese string shown on the page lives here, copied verbatim from
-// docs/content.md (blob 6866f0ce, APPROVED at GATE 1c; bổ sung chuỗi âm lịch cho Q7 =
+// docs/content.md (blob f750f977, APPROVED at GATE 1c; bổ sung chuỗi âm lịch cho Q7 =
 // "cả 2"). That file is the single source of copy for this project: do not reword,
 // translate, or "smooth out" anything here. Changes go through the Analyst and Chief, who
 // update docs/content.md first.
@@ -19,9 +19,12 @@ export const site = {
     subheading: 'Tết Nguyên đán Đinh Mùi 2027',
     milestone:
       'Mùng 1 Tết: thứ Bảy, 06/02/2027 (dương lịch) · mùng 1 tháng Giêng năm Đinh Mùi (âm lịch) · Tất niên: thứ Sáu, 05/02/2027 (ngày cuối tháng Chạp)',
-    /** Q7 = "cả 2": mandatory lunar string, verbatim from docs/content.md, and the string
-     *  AC2 tests bind to. Never reword it. */
-    lunar: 'Mùng 1 tháng Giêng năm Đinh Mùi',
+    /**
+     * AC2 anchor decided by the Analyst in docs/content.md: the lunar text as it appears
+     * inside `milestone` above ("mùng" mid-sentence, lowercase). It is case-independent on
+     * purpose, so tests must not depend on the capitalisation of "Mùng"/"mùng".
+     */
+    lunarAnchor: 'tháng Giêng năm Đinh Mùi',
     zodiac: 'Năm Đinh Mùi — năm con Dê',
   },
 

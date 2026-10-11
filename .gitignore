@@ -5,6 +5,12 @@ dist/
 # dependencies
 node_modules/
 
+# No lockfile in this repository: the user decided "dùng npm i" (plan bản 10, P7 đóng), so
+# the acceptance command is `npm install --include=dev`. The direct dependencies are pinned
+# exactly; transitive versions are not (plan R3, known debt). Ignored so a local install
+# cannot commit one by accident.
+package-lock.json
+
 # test output
 playwright-report/
 test-results/

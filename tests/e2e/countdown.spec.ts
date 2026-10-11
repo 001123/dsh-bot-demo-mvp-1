@@ -7,22 +7,35 @@ import { site } from '../../src/content/site'
 const PAGE_URL = `${BASE}/`
 const dayLabel = (days: number) => site.countdown.labelTemplate.replace('{X}', String(days))
 
+// Plan bản 10 asks for the day label to be asserted as a REGEX, because `{X}` is a slot the
+// page fills with a number, not a literal string. Built from the template so it still tracks
+// docs/content.md.
+const DAY_LABEL_RE = new RegExp(`^${site.countdown.labelTemplate.replace('{X}', '\\d+')}$`)
+
 const MOMENTS = [
-  { name: '1 — before Tết, 2027-01-20', iso: '2027-01-20T00:00:00+07:00', expected: dayLabel(17) },
+  {
+    name: '1 — before Tết, 2027-01-20',
+    iso: '2027-01-20T00:00:00+07:00',
+    expected: dayLabel(17),
+    countsDays: true,
+  },
   {
     name: '2 — lower bound 2027-02-05T23:59:59+07:00 (rounded up)',
     iso: '2027-02-05T23:59:59+07:00',
     expected: dayLabel(1),
+    countsDays: true,
   },
   {
     name: '3 — just past the milestone, 2027-02-06T00:00:01+07:00',
     iso: '2027-02-06T00:00:01+07:00',
     expected: site.countdown.afterMilestone,
+    countsDays: false,
   },
   {
     name: '4 — after Tết, 2027-02-10',
     iso: '2027-02-10T00:00:00+07:00',
     expected: site.countdown.afterMilestone,
+    countsDays: false,
   },
 ] as const
 
@@ -41,6 +54,7 @@ for (const moment of MOMENTS) {
     const output = page.locator('[data-countdown]')
     await expect(output).toBeVisible()
     await expect(output).toHaveText(moment.expected)
+    if (moment.countsDays) await expect(output).toHaveText(DAY_LABEL_RE)
     // A past milestone must never turn into a negative day count.
     await expect(output).not.toHaveText(/-/)
 
