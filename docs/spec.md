@@ -3,7 +3,7 @@
 - Trạng thái: **APPROVED — user duyệt ở GATE 1a ngày 2026-10-11**
 - Người viết: Analyst (BA)
 - Yêu cầu gốc (nguyên văn): "Làm 1 trang landing đơn giản nói về tết âm lịch 2027"
-- Cập nhật: 2026-10-11 (bổ sung đáp án Q1–Q5; chi tiết hoá AC10 theo đề xuất của Analyst + CodeReader; **user xác nhận lại Q2(a)**; **user chốt không thêm AC11**; **user trả lời Q6/Q7/Q8 — Q7 = hiển thị cả dương lịch và âm lịch ⇒ AC2 mở rộng**)
+- Cập nhật: 2026-10-11 (bổ sung đáp án Q1–Q5; chi tiết hoá AC10 theo đề xuất của Analyst + CodeReader; **user xác nhận lại Q2(a)**; **user chốt không thêm AC11**; **user trả lời Q6/Q7/Q8 — Q7 = hiển thị cả dương lịch và âm lịch ⇒ AC2 mở rộng**; **làm rõ cách đọc AC5 sau review độc lập T1**)
 - Lưu ý: user đã trả lời **Q1(a), Q2(a) (đã xác nhận lại 2026-10-11), Q3(a), Q4 (có đếm ngược), Q5, Q6 (deadline trong hôm nay, ASAP), Q7 (cả dương lịch và âm lịch), Q8 (browserslist default)** — mọi câu hỏi mở đã có đáp án (chi tiết + nguồn: mục 6, mục 9).
 - Issue theo dõi: https://github.com/001123/dsh-bot-demo-mvp-1/issues/1
 
@@ -29,6 +29,8 @@ Mốc dữ liệu cần hiển thị đúng (đã kiểm chứng, nguồn: [Tu�
 - AC3: Trang có tối thiểu 3 khối nội dung ngoài hero: (a) giới thiệu/ý nghĩa Tết, (b) phong tục ngày Tết, (c) lời chúc Tết. Mỗi khối có tiêu đề và tối thiểu 1 đoạn văn bản tiếng Việt, không có văn bản giữ chỗ kiểu "Lorem ipsum"/"TODO".
 - AC4: Trang responsive: ở viewport rộng 375px và 1440px, không có cuộn ngang (scrollWidth <= clientWidth) và nội dung không bị cắt/nội dung không trùng nhau.
 - AC5: Tất cả hình ảnh hiển thị đúng (không ảnh vỡ/icon 404) và có thuộc tính alt bằng tiếng Việt mô tả nội dung ảnh.
+- Làm rõ AC5 (2026-10-11, Chief chốt sau review độc lập T1): tiêu chí áp cho ảnh/icon mà **chính trang tham chiếu** (URL xuất hiện trong HTML/CSS của trang). Request `/favicon.ico` do trình duyệt tự phát khi trang không khai báo icon, và `/robots.txt`, KHÔNG tính là vi phạm. Ngược lại: trang **có** khai báo ảnh/icon mà URL đó trả ≥400 thì VI PHẠM (kể cả khi nguyên nhân là thiếu `base`).
+  - Dạng assertion cho T6: (a) mọi `<img>` có `alt` tiếng Việt không rỗng; (b) mọi URL **trang tham chiếu** (link/script/img/srcset + `url()` trong CSS) trả **< 400**, chạy **trên đường dẫn có base**; (c) loại trừ đích danh `/favicon.ico` (khi trang không khai báo icon) và `/robots.txt`. Dạng này không cho phép nới thành "bỏ qua 404".
 - AC6: Trang không có lỗi JavaScript ở console khi tải lần đầu và khi cuộn hết trang.
 - AC7: Không có thành phần tương tác gửi dữ liệu đi (form, ô nhập email, thanh toán); mọi liên kết/CTA nếu có đều trỏ tới URL hợp lệ, không phải "#" rỗng.
 - AC8: Nội dung chính (tiêu đề, ngày Tết) nằm trong HTML trả về từ server hoặc trong DOM sau khi tải xong — kiểm tra được bằng cách xem nguồn/DOM mà không cần bấm gì.
@@ -43,6 +45,7 @@ Mốc dữ liệu cần hiển thị đúng (đã kiểm chứng, nguồn: [Tu�
 - Responsive cho mobile và desktop.
 - Có repository + README hướng dẫn chạy local.
 - Đồng hồ đếm ngược tới mùng 1 Tết (AC10) — JS tĩnh, có fallback khi tắt JS.
+- **Icon/favicon**: trang khai báo `<link rel="icon">` với **SVG tự vẽ** (không tải từ internet — R3), `href` **đi qua base path** (làm ở T2).
 - Nội dung do Analyst/team viết bản mẫu tiếng Việt (Q3a), chủ đề "Tết 2027 Happier"; theme đỏ–vàng truyền thống, không cần logo/bảng màu riêng (Q2a).
 - Deploy lên URL công khai bằng GitHub Pages (Q5) — xem mục 8.
 
@@ -75,14 +78,19 @@ Mốc dữ liệu cần hiển thị đúng (đã kiểm chứng, nguồn: [Tu�
 - R4: Phạm vi phình ra (thêm form, đếm ngược, đa ngôn ngữ) — mọi thứ ngoài mục 4 phải qua gate để user duyệt lại. **Lưu ý**: đếm ngược (AC10) đã được user yêu cầu ⇒ nay thuộc phạm vi, nhưng vẫn phải user duyệt khi duyệt plan ở GATE 1c vì là tiêu chí thêm sau baseline.
 - R5: Tiêu chí AC9 (thời gian tải) phụ thuộc môi trường đo — chốt đo trên localhost, mạng thường.
 - R6: Đếm ngược "test xanh mà sản phẩm sai" nếu AC không đủ chi tiết (mốc, timezone, làm tròn, hành vi sau mốc, fallback) — đã chi tiết hoá ở AC10.
+- R7: Favicon khai báo sai đường dẫn (thiếu base) ⇒ 404 thật ⇒ **vi phạm AC5** theo cách đọc đã làm rõ ở mục 3. Bắt buộc `href` đi qua base; test phải chạy trên đường dẫn có base.
+- R8: Chuỗi âm lịch (Q7 = "cả 2") chưa có trong `docs/content.md` ⇒ T3 không được bắt đầu trước khi Analyst bổ sung và Chief push. Không tự đặt chuỗi.
 
 ## 8. Gate
 
 - GATE 1a: **ĐÃ QUA** — user duyệt spec này ngày 2026-10-11 (qua Chief). Được phép chuyển sang bước thiết kế.
-- Bước tiếp theo: Architect cập nhật `docs/plan.md` theo Q6/Q7/Q8; user đã duyệt plan + nội dung ở GATE 1c (2026-10-11). Q1(a), Q2(a) (xác nhận lại 2026-10-11), Q3(a), Q4 (có đếm ngược), Q5, **Q6 (deadline hôm nay, ASAP), Q7 (cả dương lịch và âm lịch), Q8 (browserslist default)** đã chốt ngày 2026-10-11 — **không còn câu hỏi mở**.
+- GATE 1b: **ĐÃ QUA** — user chốt PA3 Astro, sau đó chốt bỏ Starlight (ADR 0002).
+- GATE 1c: **ĐÃ QUA** — user gõ "Duyệt" trong group chat "Demo MVP 1", 2026-10-11; hồ sơ duyệt gồm plan + `docs/content.md`.
+- Bước tiếp theo: Architect cập nhật `docs/plan.md` theo Q6/Q7/Q8; user đã duyệt plan + nội dung ở GATE 1c (2026-10-11). Q1–Q8 **không còn câu hỏi mở**.
 - **Thay đổi phạm vi cần user duyệt lại ở GATE 1c:** (1) deploy URL công khai (GitHub Pages) từ out-of-scope sang in-scope; (2) AC10 (đếm ngược) là tiêu chí mới thêm sau baseline GATE 1a; (3) chi tiết hoá AC10 (mốc cố định UTC+7, làm tròn lên, hành vi sau mốc, fallback `<noscript>`) — **không đổi tiêu chí, chỉ làm rõ**.
 - **Thay đổi sau GATE 1c (2026-10-11, do user yêu cầu trực tiếp):** AC2 mở rộng — hero phải hiển thị **cả dương lịch và âm lịch** (Q7 = "cả 2", nguồn: group chat "Demo MVP 1"). Chuỗi âm lịch **phải** nằm trong `docs/content.md` trước khi T3 bắt đầu (Analyst soạn → Chief push). Plan cần cập nhật T3/test AC2.
 - **AC11 (đề xuất của Analyst — ĐÃ CÓ QUYẾT ĐỊNH: KHÔNG THÊM):** đề xuất là một AC kiểm được màu — "hero dùng nền đỏ hoặc vàng truyền thống, chữ trên nền đạt tương phản ≥ 4,5:1". **User chốt ngày 2026-10-11, group chat "Demo MVP 1" (nguyên văn: "ac11 chưa cần") ⇒ AC11 KHÔNG được thêm vào spec.** Theme đỏ–vàng (Q2a) vẫn được kiểm bằng mắt ở bước review. Muốn thêm sau này thì phải qua gate mới.
+- **GATE 2 (deploy): CHƯA QUA.** `has_pages` = false; chưa có lệnh deploy nào.
 
 ## 9. Nguồn các câu trả lời
 
@@ -92,5 +100,6 @@ Mốc dữ liệu cần hiển thị đúng (đã kiểm chứng, nguồn: [Tu�
 - Q5 + stack: user trả lời qua chat Architect, 2026-10-11 08:57 (anchor `#331`), ghi tại `docs/adr/0001-stack.md` mục 0.
 - Q6, Q7, Q8: user trả lời trực tiếp trong group chat "Demo MVP 1", 2026-10-11 (Chief đọc trực tiếp từ log); nguyên văn ghi ở mục 6; Chief push bản cập nhật này.
 - Chi tiết hoá AC10 (mốc, làm tròn, hành vi sau mốc, fallback): do **Analyst** soạn (đề xuất làm tròn lên) và **CodeReader** nêu 4 điểm kỹ thuật (mốc `2027-02-06T00:00:00+07:00`, dừng tick sau mốc, `<noscript>` + giữ độ cao, test 4 thời điểm); Chief tổng hợp và push. Không thêm tiêu chí mới.
+- **Làm rõ AC5 + favicon**: Chief chốt 2026-10-11 sau review độc lập T1 của Architect (Architect nêu vấn đề `/favicon.ico` 404 vs AC5, đề xuất dạng assertion cho T6 và cảnh báo bẫy `base` path). **Không đổi tiêu chí AC5** — chỉ chốt cách đọc và phạm vi áp dụng.
 - Quyết định triển khai (Astro thường thay Starlight; repo public) ghi tại `docs/adr/0001-stack.md` + `docs/adr/0002-bo-starlight-va-repo-public.md`, không ghi trong spec.
 - Quy ước: mỗi dòng mang tính quyết định phải có nguồn (ai nói · khi nào · kênh). Thiếu nguồn ⇒ coi như chưa chốt.
