@@ -1,10 +1,20 @@
 # Deploy landing "Tết 2027 Happier" lên GitHub Pages.
 #
-# Tạo bởi Chief (2026-10-11) theo lệnh deploy của user ở GATE 2 — nguyên văn:
-#   "GẤP RÚT BỎ QUA TEST, MERGE VÀ DEPLOY ĐỂ TÔI THẤY SẢN PHẨM"
-# Workflow này CHỈ build tĩnh + upload artifact + deploy; không ghi gì vào repo
-# (contents: read), không chạy lifecycle script ngoài luồng npm install/build.
-# Repo không có package-lock.json (quyết định của user) ⇒ dùng `npm install --include=dev`
+# Tạo theo lệnh deploy của user ở GATE 2 — nguyên văn (user · group chat "Demo MVP 1" ·
+# 2026-10-11): "GẤP RÚT BỎ QUA TEST, MERGE VÀ DEPLOY ĐỂ TÔI THẤY SẢN PHẨM"
+#
+# Bản này sửa 4 điểm Architect nêu sau khi bản đầu lên `main` (review chưa kịp):
+#   1. `permissions` mức workflow chỉ còn `contents: read`. `pages: write` + `id-token: write`
+#      nằm CHỈ ở job `deploy`. Job `build` chạy `npm install`/`npm run build` (code trong
+#      repo) nên không được giữ token ghi — đúng lỗ đã bịt ở `generate-lockfile.yml`.
+#   2. Toàn bộ `actions/*` pin theo commit SHA (không dùng tag major) — repo public.
+#   3. Bỏ `enablement: true` của `configure-pages`: bản cũ cố tự bật Pages bằng token CI và
+#      đã fail ở run 38130695550. Bật Pages là thao tác của user, không phải của CI.
+#   4. Giữ `push: main` + `workflow_dispatch` theo lệnh deploy hiện tại. Sau khi user đã thấy
+#      sản phẩm, nên chuyển về `workflow_dispatch` và bật required reviewer cho environment
+#      `github-pages`, để mọi lần deploy phải chờ người duyệt.
+#
+# Repo không có `package-lock.json` (quyết định của user) ⇒ dùng `npm install --include=dev`
 # vì môi trường CI/host đặt NODE_ENV=production sẽ bỏ qua devDependencies.
 
 name: Deploy to GitHub Pages
@@ -16,11 +26,9 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
+  group: github-pages
   cancel-in-progress: false
 
 jobs:
@@ -29,30 +37,31 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "22.12.0"
-      - name: Configure Pages (bật Pages nếu chưa bật)
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
+      - name: Configure Pages
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
       - name: Install dependencies
         run: npm install --include=dev
       - name: Build
         run: npm run build
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:
           path: dist
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
