@@ -1,0 +1,58 @@
+# Deploy landing "Tết 2027 Happier" lên GitHub Pages.
+#
+# Tạo bởi Chief (2026-10-11) theo lệnh deploy của user ở GATE 2 — nguyên văn:
+#   "GẤP RÚT BỎ QUA TEST, MERGE VÀ DEPLOY ĐỂ TÔI THẤY SẢN PHẨM"
+# Workflow này CHỈ build tĩnh + upload artifact + deploy; không ghi gì vào repo
+# (contents: read), không chạy lifecycle script ngoài luồng npm install/build.
+# Repo không có package-lock.json (quyết định của user) ⇒ dùng `npm install --include=dev`
+# vì môi trường CI/host đặt NODE_ENV=production sẽ bỏ qua devDependencies.
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.12.0"
+      - name: Configure Pages (bật Pages nếu chưa bật)
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - name: Install dependencies
+        run: npm install --include=dev
+      - name: Build
+        run: npm run build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
