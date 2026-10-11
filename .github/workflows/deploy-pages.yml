@@ -14,6 +14,9 @@
 #      sản phẩm, nên chuyển về `workflow_dispatch` và bật required reviewer cho environment
 #      `github-pages`, để mọi lần deploy phải chờ người duyệt.
 #
+# Retry 2026-10-11: user báo đã cập nhật quyền Pages cho repo; Chief push lại để kích hoạt
+# một run mới (nguồn: user · group chat "Demo MVP 1" · 2026-10-11).
+#
 # Repo không có `package-lock.json` (quyết định của user) ⇒ dùng `npm install --include=dev`
 # vì môi trường CI/host đặt NODE_ENV=production sẽ bỏ qua devDependencies.
 
