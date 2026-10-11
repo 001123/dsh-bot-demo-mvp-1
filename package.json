@@ -10,12 +10,14 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "test:e2e": "playwright test",
     "astro": "astro"
   },
   "dependencies": {
     "astro": "7.3.8"
   },
   "devDependencies": {
+    "@playwright/test": "1.64.0",
     "@tailwindcss/vite": "4.3.3",
     "tailwindcss": "4.3.3"
   }
