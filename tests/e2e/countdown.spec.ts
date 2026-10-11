@@ -105,6 +105,9 @@ test.describe('the countdown (AC10)', () => {
   // Crosses the milestone while the clock is running: the page is loaded BEFORE the milestone
   // and must switch over by itself, with no reload. The suite's fixed-instant cases cannot
   // catch a tick that never re-evaluates.
+  // ca do Architect soạn, đưa vào theo yêu cầu Chief.
+  // (Bản nguyên văn chưa có trong comment Issue #1 tại thời điểm push; phần code dưới đây do
+  //  CodeReader viết theo đúng mô tả của Chief và sẽ đối chiếu lại khi Architect đăng nguyên văn.)
   test('7 — crosses the milestone live, without a reload', async ({ page }) => {
     const problems = watchForProblems(page)
 
@@ -131,6 +134,9 @@ test.describe('the countdown (AC10)', () => {
 test.describe('the label does not depend on the visitor time zone', () => {
   test.use({ timezoneId: 'America/New_York' })
 
+  // ca do Architect soạn, đưa vào theo yêu cầu Chief.
+  // (Bản nguyên văn chưa có trong comment Issue #1 tại thời điểm push; phần code dưới đây do
+  //  CodeReader viết theo đúng mô tả của Chief và sẽ đối chiếu lại khi Architect đăng nguyên văn.)
   test('8 — 2027-01-20 still reads 17 days in America/New_York', async ({ page }) => {
     const problems = watchForProblems(page)
 
