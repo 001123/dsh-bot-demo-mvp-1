@@ -1,0 +1,24 @@
+---
+// T3 — hero + the three content blocks (AC2, AC3, AC8), plus the T7 countdown island.
+// All copy comes from src/content/site.ts, which mirrors docs/content.md verbatim;
+// nothing is written here.
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Hero from '../components/Hero.astro'
+import Countdown from '../components/Countdown.astro'
+import ContentBlock from '../components/ContentBlock.astro'
+import { site } from '../content/site'
+---
+
+<BaseLayout>
+  <Hero />
+  <Countdown />
+  {
+    site.blocks.map((block) => (
+      <ContentBlock
+        heading={block.heading}
+        paragraphs={block.paragraphs}
+        listItems={'listItems' in block ? block.listItems : undefined}
+      />
+    ))
+  }
+</BaseLayout>

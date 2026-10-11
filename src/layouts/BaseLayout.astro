@@ -1,0 +1,45 @@
+---
+// T2 — page frame and theme. One static page, Vietnamese, traditional Tết red + gold
+// (Q2(a): no brand assets, no logo). Deliberately absent: sidebar, search, theme switch,
+// forms and outbound CTAs (AC7, and Q1(a) asks for a greeting, not a call to action).
+import '../styles/global.css'
+import { site } from '../content/site'
+
+interface Props {
+  title?: string
+  description?: string
+}
+
+const { title = site.title, description = site.description } = Astro.props
+
+// The page is served under `base` (/dsh-bot-demo-mvp-1), so the icon needs that prefix.
+// BASE_URL may or may not carry a trailing slash, so normalise before joining.
+//
+// Declaring the icon also keeps the browser from falling back to the default site-icon
+// path, which the site does not serve (AC5 — see the T6 assertion form in the spec: a URL
+// the page itself references must answer < 400, while the browser's own default-icon and
+// robots.txt probes are excluded).
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
+const faviconHref = `${base}/favicon.svg`
+---
+
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href={faviconHref} />
+  </head>
+  <body class="bg-tet-cream text-tet-ink antialiased">
+    <div class="flex min-h-screen flex-col">
+      <main class="flex-1"><slot /></main>
+      <footer class="bg-tet-red-deep text-tet-cream">
+        <p class="mx-auto w-full max-w-3xl px-5 py-6 text-sm leading-relaxed">
+          {site.footer}
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>

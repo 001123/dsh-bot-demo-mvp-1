@@ -1,0 +1,68 @@
+---
+// T7 — countdown to mùng 1 Tết (AC10).
+//
+// This is the only JavaScript on the page. Without a UI-framework integration there is no
+// `client:load` directive to use, so the island is a plain Astro `<script>`: Astro bundles
+// it and loads it once on the client, which is the vanilla equivalent here.
+//
+// Two text slots, never both visible:
+//   <noscript> — the static fallback required by AC10 (shown only when JS is off), and the
+//                same string is what AC8 finds in the served HTML;
+//   <p data-countdown> — empty and hidden in the HTML, filled by the script.
+// The wrapper reserves height so the 375px layout does not jump (AC4).
+import { site } from '../content/site'
+---
+
+<section class="bg-tet-red-dark text-tet-cream">
+  <div class="mx-auto flex w-full max-w-3xl items-center justify-center px-5 py-8">
+    <div class="flex min-h-16 items-center justify-center">
+      <noscript>
+        <p class="text-base leading-relaxed sm:text-lg">{site.countdown.noscriptFallback}</p>
+      </noscript>
+      <p
+        class="text-base leading-relaxed sm:text-lg"
+        data-countdown
+        data-target={site.countdown.targetIso}
+        data-template={site.countdown.labelTemplate}
+        data-after={site.countdown.afterMilestone}
+        hidden></p>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Small local copy of the module script; Astro hoists and bundles this once per page.
+  // Strings and the milestone are read from data attributes so that src/content/site.ts
+  // stays the single source of copy.
+  const MS_PER_DAY = 86_400_000
+
+  for (const node of document.querySelectorAll<HTMLElement>('[data-countdown]')) {
+    const target = Date.parse(node.dataset.target ?? '')
+    const template = node.dataset.template ?? ''
+    const after = node.dataset.after ?? ''
+    if (Number.isNaN(target) || template === '' || after === '') continue
+
+    let timer = 0
+
+    const tick = (): void => {
+      // Epoch arithmetic against a fixed +07:00 instant, so the visitor's own timezone
+      // cannot change the answer (AC10).
+      const remaining = target - Date.now()
+
+      if (remaining <= 0) {
+        // Past the milestone: show the greeting and stop updating. Never a negative day count.
+        node.textContent = after
+        node.hidden = false
+        clearInterval(timer)
+        return
+      }
+
+      // Rounded UP: at 2027-02-05T23:59:59+07:00 exactly one second is left, so "còn 1 ngày".
+      node.textContent = template.replace('{X}', String(Math.ceil(remaining / MS_PER_DAY)))
+      node.hidden = false
+    }
+
+    timer = window.setInterval(tick, 60_000)
+    tick()
+  }
+</script>

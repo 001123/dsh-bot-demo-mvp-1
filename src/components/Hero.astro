@@ -1,0 +1,21 @@
+---
+// T3 — hero. The hero is a Tết greeting (Q1(a)), so it carries no call to action and no
+// outbound link (AC7). Every string comes from src/content/site.ts, which is docs/content.md
+// verbatim. The lunar date rides inside `milestone`; AC2's anchor is
+// site.hero.lunarAnchor ("tháng Giêng năm Đinh Mùi"), case-independent by design.
+import { site } from '../content/site'
+import Blossom from './Blossom.astro'
+---
+
+<section class="bg-tet-red text-tet-cream">
+  <div class="mx-auto w-full max-w-3xl px-5 py-14 text-center">
+    <h1 class="text-4xl font-bold tracking-tight text-tet-gold sm:text-5xl">
+      {site.hero.heading}
+    </h1>
+    <p class="mt-4 text-lg">{site.hero.subheading}</p>
+    <p class="mt-6 leading-relaxed">{site.hero.milestone}</p>
+    <p class="mt-2 leading-relaxed">{site.hero.zodiac}</p>
+    <!-- T4: decoration is inline SVG, never a raster file (spec R3). -->
+    <Blossom class="mx-auto mt-8 block" />
+  </div>
+</section>
