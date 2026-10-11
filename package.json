@@ -12,6 +12,7 @@
     "preview": "astro preview",
     "test:e2e": "playwright test",
     "test:e2e:gate": "playwright test --workers=1",
+    "test:e2e:live": "playwright test -c playwright.live.config.ts --workers=1",
     "astro": "astro"
   },
   "dependencies": {

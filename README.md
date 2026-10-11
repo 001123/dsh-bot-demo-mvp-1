@@ -76,6 +76,19 @@ Bằng chứng cho gate — chạy tuần tự (`workers=1`) để giảm nhiễ
 npm run test:e2e:gate
 ```
 
+Bộ **live** — chạy trên **bản đã deploy**, **cần internet**, khác hẳn bộ hermetic ở trên (bộ
+hermetic tự dựng build local trong port riêng):
+
+```sh
+# mặc định trỏ https://001123.github.io/dsh-bot-demo-mvp-1/ — đổi bằng LIVE_URL
+npm run test:e2e:live
+```
+
+Nó nằm ở `tests/live/` với config riêng `playwright.live.config.ts` (**không** `webServer`,
+**không** cổng cục bộ), nên `npm test` vẫn chạy offline và không dẫm vào preview của Bot khác.
+Số đo navigation trong bộ này là **thời gian đường mạng** (DNS/CDN/TTFB) trên bản deploy —
+**không** phải verdict AC9; verdict AC9 do bộ local (`tests/e2e/landing.spec.ts`) quyết định.
+
 Test **không** dựa vào retry để xanh. `retries` chỉ bật trong CI để giảm nhiễu hạ tầng, còn
 các phép đo được làm ổn định ngay trong test: mục AC4 chờ layout settle
 (`document.fonts.ready` + hai `requestAnimationFrame`) trước khi đọc `scrollWidth`, và in số

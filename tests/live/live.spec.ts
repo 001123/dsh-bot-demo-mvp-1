@@ -60,9 +60,13 @@ test('live/AC6 — no console error or page error on load, and after scrolling t
   await page.goto(PAGE_URL, { waitUntil: 'load' })
   await expect(page.locator('[data-countdown]')).toBeVisible()
 
-  // Walk down the page so any lazy work runs, then give it a beat.
+  // Walk down the page so any lazy work runs, then wait for real conditions instead of a fixed
+  // sleep: the network must fall quiet and the webfont swap must have finished.
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
-  await page.waitForTimeout(1_000)
+  await page.waitForLoadState('networkidle')
+  await page.evaluate(async () => {
+    await document.fonts?.ready
+  })
 
   expect(problems, 'the live page must log no error').toEqual([])
 })
@@ -200,7 +204,14 @@ test('live/AC5 — every URL the live page references answers < 400', async ({ p
   expect(broken, 'a referenced URL that 404s on the deployed site is a violation').toEqual([])
 })
 
-test('live/AC9 — record the real navigation duration of the deployed page', async ({ page }) => {
+// NOT the AC9 verdict. `PerformanceNavigationTiming.duration` on a public URL measures the
+// network path (DNS, CDN, TTFB, transfer) — it says nothing about how the site builds or
+// renders: the same build can read 200 ms or 2 s depending on the connection. Labelling this
+// "AC9" would let a slow network be filed as an AC9 failure, i.e. wrong evidence. The AC9
+// verdict stays with the hermetic suite: `tests/e2e/landing.spec.ts`, against a local build.
+test('live/NET-timing — navigation timing of the deployed page (NOT the AC9 verdict)', async ({
+  page,
+}) => {
   await page.goto(PAGE_URL, { waitUntil: 'load' })
 
   const duration = await page.evaluate(() => {
@@ -210,13 +221,13 @@ test('live/AC9 — record the real navigation duration of the deployed page', as
     return entry?.duration ?? -1
   })
 
-  // Same rule as the local suite: record the real number, and keep the budget loose so a slow
-  // network leg cannot become a second source of false reds.
+  // A loose sanity bound on the network leg only, for the same reason: it must never turn into
+  // a red that someone reads as "AC9 failed".
   const budget = Number(process.env.LIVE_BUDGET_MS ?? 8000)
 
-  const line = `[live/AC9] navigation duration = ${duration.toFixed(1)} ms (budget ${budget} ms)`
+  const line = `[live/NET-timing] navigation duration = ${duration.toFixed(1)} ms (network-bound, budget ${budget} ms) — verdict AC9 vẫn ở tests/e2e/landing.spec.ts`
   console.log(line)
-  test.info().annotations.push({ type: 'live/AC9', description: line })
+  test.info().annotations.push({ type: 'live/NET-timing', description: line })
 
   expect(duration).toBeGreaterThan(0)
   expect(duration, line).toBeLessThan(budget)
