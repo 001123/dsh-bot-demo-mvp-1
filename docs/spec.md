@@ -3,8 +3,8 @@
 - Trạng thái: **APPROVED — user duyệt ở GATE 1a ngày 2026-10-11**
 - Người viết: Analyst (BA)
 - Yêu cầu gốc (nguyên văn): "Làm 1 trang landing đơn giản nói về tết âm lịch 2027"
-- Cập nhật: 2026-10-11 (bổ sung đáp án Q1, Q2, Q3, Q5)
-- Lưu ý: user đã trả lời **Q1(a), Q2(a), Q3(a), Q5**; **Q4, Q6, Q7, Q8 chưa trả lời** (xem mục 6). Các câu chưa trả lời cần user chốt, không tự quyết.
+- Cập nhật: 2026-10-11 (bổ sung đáp án Q1, Q2, Q3, Q4, Q5)
+- Lưu ý: user đã trả lời **Q1(a), Q2(a), Q3(a), Q4 (có đếm ngược), Q5**; **Q6, Q7, Q8 chưa trả lời** (xem mục 6). Các câu chưa trả lời cần user chốt, không tự quyết.
 - Issue theo dõi: https://github.com/001123/dsh-bot-demo-mvp-1/issues/1
 
 ## 1. Bối cảnh
@@ -33,6 +33,7 @@ Mốc dữ liệu cần hiển thị đúng (đã kiểm chứng, nguồn: [Tu�
 - AC7: Không có thành phần tương tác gửi dữ liệu đi (form, ô nhập email, thanh toán); mọi liên kết/CTA nếu có đều trỏ tới URL hợp lệ, không phải "#" rỗng.
 - AC8: Nội dung chính (tiêu đề, ngày Tết) nằm trong HTML trả về từ server hoặc trong DOM sau khi tải xong — kiểm tra được bằng cách xem nguồn/DOM mà không cần bấm gì.
 - AC9: Thời gian tải trang trên kết nối thường < 3 giây (đo bằng devtools, không tính cache lần đầu).
+- AC10: Trang có đồng hồ đếm ngược tới mùng 1 Tết 06/02/2027, hiển thị dạng "còn X ngày". Đồng hồ tính bằng JS tĩnh từ Date phía client, KHÔNG gọi API/backend. Khi tắt JavaScript, vùng đó vẫn hiển thị text tĩnh thay thế, không được để trống. Console không có lỗi cả trước và sau khi giá trị được cập nhật (bổ sung cho AC6).
 
 ## 4. Phạm vi (in scope)
 
@@ -41,6 +42,7 @@ Mốc dữ liệu cần hiển thị đúng (đã kiểm chứng, nguồn: [Tu�
 - Hình ảnh/trang trí ở mức đơn giản (ảnh có sẵn hoặc CSS).
 - Responsive cho mobile và desktop.
 - Có repository + README hướng dẫn chạy local.
+- Đồng hồ đếm ngược tới mùng 1 Tết (AC10) — JS tĩnh, có fallback khi tắt JS.
 - Nội dung do Analyst/team viết bản mẫu tiếng Việt (Q3a), chủ đề "Tết 2027 Happier"; theme đỏ–vàng truyền thống, không cần logo/bảng màu riêng (Q2a).
 - Deploy lên URL công khai bằng GitHub Pages (Q5) — xem mục 8.
 
@@ -51,7 +53,7 @@ Mốc dữ liệu cần hiển thị đúng (đã kiểm chứng, nguồn: [Tu�
 - CMS/quản trị nội dung; nội dung nằm trong source code.
 - Âm thanh/pháo hoa/video, animation phức tạp.
 - SEO nâng cao, analytics, quảng cáo, tracking.
-- Backend/API/database; đếm ngược theo thời gian thực là optional (xem câu hỏi mở Q4).
+- Backend/API/database. Đếm ngược KHÔNG được gọi API/backend (xem AC10).
 - Deploy lên tên miền/domain riêng. **Deploy lên URL công khai bằng GitHub Pages nay là IN SCOPE** (user chốt Q5) — xem mục 8.
 
 ## 6. Câu hỏi mở (cần user trả lời trước khi chốt)
@@ -59,7 +61,7 @@ Mốc dữ liệu cần hiển thị đúng (đã kiểm chứng, nguồn: [Tu�
 - Q1: **ĐÃ TRẢ LỜI (user, 2026-10-11): (a) lời chúc Tết cá nhân/tổ chức.** Nguyên văn: "1, Chúc Tết Happier". Hệ quả: hero là lời chúc Tết; không cần CTA dẫn ra ngoài — nếu có link thì phải là URL thật (AC7 cấm "#" rỗng).
 - Q2: **ĐÃ TRẢ LỜI (user, 2026-10-11): (a) không có thương hiệu/logo cần hiển thị — theme đỏ–vàng truyền thống.** Nguyên văn: "2, Tết âm lịch vn". Làm rõ với user: "Happier" là tên/chủ đề của trang, không phải thương hiệu có logo/bảng màu riêng ⇒ không phát sinh ràng buộc asset; R3 không áp cho logo.
 - Q3: **ĐÃ TRẢ LỜI (user, 2026-10-11): (a) Analyst/team viết nội dung mẫu tiếng Việt; user không gửi text/ảnh.** Nguyên văn: "3, Tết 2027 Happier" + chọn Q3(a). Hệ quả: nội dung không phải điều kiện chờ user; bản mẫu trình user duyệt ở GATE 1c.
-- Q4: **CHƯA CÓ ĐÁP ÁN (user chưa trả lời).** Nếu chốt "có": thêm AC10 (đếm ngược bằng JS tĩnh, không gọi API/backend, có fallback khi tắt JS; AC6 kiểm console trước và sau khi đồng hồ tick) — vì thêm AC vào baseline GATE 1a nên phải user duyệt lại.
+- Q4: **ĐÃ TRẢ LỜI (user, 2026-10-11): CÓ đồng hồ đếm ngược tới mùng 1 Tết (dạng "còn X ngày").** Nguyên văn: "q4 có đồng hồ đếm ngược". ⇒ AC10 (mục 3) và task T7 trong plan ở trạng thái BẬT.
 - Q5: **ĐÃ TRẢ LỜI (user, 2026-10-11): cần URL công khai — deploy bằng GitHub Pages.** Nguyên văn: "Dùng astro starlight + đẩy lên github pages, fe thì dùng tailwindcss" (ghi tại docs/adr/0001-stack.md).
 - Q6: Deadline mong muốn và đây có phải bản demo để đánh giá quy trình (không cần hoàn thiện) không?
 - Q7: Ngôn ngữ hiển thị ngày: chỉ dương lịch, hay cần thêm âm lịch (ví dụ "Mùng 1 tháng Giêng")?
@@ -70,18 +72,19 @@ Mốc dữ liệu cần hiển thị đúng (đã kiểm chứng, nguồn: [Tu�
 - R1: Yêu cầu còn mơ hồ (mục đích, thương hiệu, nội dung) — nếu chốt sớm dễ làm sai hướng, phải sửa nhiều. Giảm thiểu: trả lời Q1–Q3 trước khi sang thiết kế. **Đã xử lý**: Q1(a), Q2(a), Q3(a) đã chốt ngày 2026-10-11.
 - R2: Ngày Tết có thể bị sai nếu lấy từ nguồn không kiểm chứng — đã kiểm chứng và ghi nguồn; nếu có nguồn chính thống khác thì cập nhật lại.
 - R3: Bản quyền hình ảnh Tết lấy từ internet — cần dùng ảnh tự tạo/ảnh có giấy phép, hoặc chỉ dùng CSS/hình vẽ.
-- R4: Phạm vi phình ra (thêm form, đếm ngược, đa ngôn ngữ) — mọi thứ ngoài mục 4 phải qua gate để user duyệt lại.
+- R4: Phạm vi phình ra (thêm form, đếm ngược, đa ngôn ngữ) — mọi thứ ngoài mục 4 phải qua gate để user duyệt lại. **Lưu ý**: đếm ngược (AC10) đã được user yêu cầu ⇒ nay thuộc phạm vi, nhưng vẫn phải user duyệt khi duyệt plan ở GATE 1c vì là tiêu chí thêm sau baseline.
 - R5: Tiêu chí AC9 (thời gian tải) phụ thuộc môi trường đo — chốt đo trên localhost, mạng thường.
 
 ## 8. Gate
 
 - GATE 1a: **ĐÃ QUA** — user duyệt spec này ngày 2026-10-11 (qua Chief). Được phép chuyển sang bước thiết kế.
-- Bước tiếp theo: Architect làm thiết kế/ADR + plan (GATE 1b/1c). Q1(a), Q2(a), Q3(a), Q5 đã được user chốt ngày 2026-10-11; **Q4, Q6, Q7, Q8 chưa trả lời**.
+- Bước tiếp theo: Architect làm thiết kế/ADR + plan (GATE 1b/1c). Q1(a), Q2(a), Q3(a), Q4 (có đếm ngược), Q5 đã được user chốt ngày 2026-10-11; **Q6, Q7, Q8 chưa trả lời**.
 - Mọi thay đổi phạm vi sau đây (mục 5) phải qua gate mới.
-- **Thay đổi phạm vi cần user duyệt lại ở GATE 1c:** chuyển deploy URL công khai (GitHub Pages) từ out-of-scope sang in-scope; thêm AC10 nếu Q4 = "có".
+- **Thay đổi phạm vi cần user duyệt lại ở GATE 1c:** (1) deploy URL công khai (GitHub Pages) từ out-of-scope sang in-scope; (2) AC10 (đếm ngược) là tiêu chí mới thêm vào baseline GATE 1a — user đã yêu cầu, chờ duyệt chính thức khi user duyệt plan.
 
 ## 9. Nguồn các câu trả lời
 
-- Q1(a), Q2(a), Q3(a): user trả lời qua chat Analyst (BA), 2026-10-11; Analyst báo nguyên văn cho Chief và Chief push vào spec này.
+- Q1(a), Q2(a), Q3(a), Q4: user trả lời qua chat Analyst (BA), 2026-10-11; Analyst báo nguyên văn cho Chief và Chief push vào spec này.
 - Q5 + stack: user trả lời qua chat Architect, 2026-10-11 08:57 (anchor `#331`), ghi tại `docs/adr/0001-stack.md` mục 6.
+- Quyết định triển khai (Astro thường thay Starlight; repo public) ghi tại `docs/adr/0001-stack.md`, không ghi trong spec.
 - Quy ước: mỗi dòng mang tính quyết định phải có nguồn (ai nói · khi nào · kênh). Thiếu nguồn ⇒ coi như chưa chốt.
