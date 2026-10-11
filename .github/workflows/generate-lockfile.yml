@@ -1,0 +1,77 @@
+# Infrastructure workflow — NOT product code.
+#
+# Purpose: regenerate package-lock.json and commit it to the branch you name.
+#
+# Why it exists: a ds-bot shell deliberately holds no git credential (the GitHub token is
+# never shared with a Bot's shell), so the Builder cannot `git push`; the only write path is
+# the GitHub MCP API, which takes file content inline — and this lockfile is ~150 KB, which
+# is impractical to move through a model context. GitHub's own runner has a token, so it
+# does the write instead.
+#
+# Safety:
+#   - `workflow_dispatch` only: it never runs by itself.
+#   - `contents: write` is required to commit, and is used for nothing else.
+#   - it refuses to commit to the repository's default branch.
+#   - it commits exactly one file: package-lock.json.
+#   - it proves the result before committing: `npm ci` + `npm run build` must pass.
+name: Generate package-lock.json
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_branch:
+        description: "Branch that receives package-lock.json (must not be the default branch)"
+        required: true
+        default: "feat/issue-1-landing"
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Refuse the default branch
+        env:
+          TARGET: ${{ inputs.target_branch }}
+          DEFAULT: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          if [ "$TARGET" = "$DEFAULT" ]; then
+            echo "::error::Refusing to commit package-lock.json to the default branch ($DEFAULT)."
+            exit 1
+          fi
+
+      - name: Check out the target branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.target_branch }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.12.0"
+
+      - name: Generate the lockfile
+        run: npm install --package-lock-only --no-audit --no-fund
+
+      - name: Verify npm ci and the build work with it
+        run: |
+          npm ci
+          npm run build
+
+      - name: Commit package-lock.json
+        env:
+          TARGET: ${{ inputs.target_branch }}
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- package-lock.json; then
+            echo "package-lock.json is already up to date on $TARGET; nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "chore(infra): generate package-lock.json for npm ci"
+          git push origin "HEAD:$TARGET"
