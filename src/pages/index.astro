@@ -1,18 +1,10 @@
 ---
-// T1 scaffold: proves that the Astro + Tailwind build works and that `site` + `base`
-// are wired correctly. Page structure and copy land in T2 (layout/theme) and T3
-// (hero + 3 content blocks) using docs/content.md as the single source of strings.
-import '../styles/global.css'
+// T2: the page now uses the shared frame. Hero and the three content blocks land in T3,
+// the countdown island in T7 — all strings come from src/content/site.ts, which mirrors
+// docs/content.md verbatim.
+import BaseLayout from '../layouts/BaseLayout.astro'
 ---
 
-<!doctype html>
-<html lang="vi">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Tết 2027 Happier</title>
-  </head>
-  <body>
-    <main></main>
-  </body>
-</html>
+<BaseLayout>
+  <div class="mx-auto w-full max-w-3xl px-5"></div>
+</BaseLayout>

@@ -1,5 +1,18 @@
 @import "tailwindcss";
 @config "../../tailwind.config.mjs";
 
-/* Page-level styling is built on the palette declared in tailwind.config.mjs.
-   Layout and component rules (hero, content blocks, countdown) are added in T2–T7. */
+/* T2 — base look. Colours come from the `tet` palette in tailwind.config.mjs and are used
+   through utility classes in the components; this file only sets what utilities cannot. */
+@layer base {
+  html {
+    /* Keep mobile browsers from inflating text after rotation (AC4). */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    margin: 0;
+    font-family:
+      ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans",
+      sans-serif;
+  }
+}
