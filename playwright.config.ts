@@ -24,7 +24,11 @@ export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
-  retries: 0,
+  // A retry in CI only damps infrastructure noise; it is deliberately NOT the fix for a flaky
+  // test. The AC4 measurement is made deterministic by waiting for layout to settle (see
+  // tests/e2e/responsive.spec.ts), and `npm run test:e2e:gate` runs the suite single-worker
+  // for gate evidence.
+  retries: process.env.CI ? 1 : 0,
   reporter: [['list']],
   use: {
     baseURL: ORIGIN,

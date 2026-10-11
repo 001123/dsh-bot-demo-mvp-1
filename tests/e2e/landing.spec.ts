@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import { expect, test } from '@playwright/test'
 import { BASE } from '../../playwright.config'
 import { site } from '../../src/content/site'
@@ -100,6 +102,16 @@ test('AC5 — every URL the page references answers < 400, and no <img> lacks al
   const references = new Set<string>()
   for (const match of html.matchAll(/(?:href|src)="([^"]+)"/g)) references.add(match[1])
 
+  // `srcset` is a comma-separated candidate list ("img-2x.png 2x, img-1x.png 1x"): take the
+  // URL part of each candidate. The page ships no raster image today, so this is future-proofing —
+  // adding a responsive image later must not slip past the AC5 check.
+  for (const match of html.matchAll(/srcset="([^"]+)"/g)) {
+    for (const candidate of match[1].split(',')) {
+      const url = candidate.trim().split(/\s+/)[0]
+      if (url !== '') references.add(url)
+    }
+  }
+
   // Stylesheets can reference assets too (background images, fonts).
   for (const sheet of html.matchAll(/href="([^"]+\.css)"/g)) {
     const css = await (await request.get(sheet[1])).text()
@@ -162,13 +174,52 @@ test('AC9 — navigation timing stays under the 3 s budget (local preview)', asy
     return entry?.duration ?? -1
   })
 
-  // The plan asks for the real number to be recorded, not for a hard CI gate.
+  // The plan asks for the real number to be recorded rather than for a hard CI gate. A cold CI
+  // runner can legitimately exceed 3 s, so the budget is looser there — otherwise it becomes a
+  // second source of false reds, the same class of problem as the AC4 flake.
+  const budget = process.env.CI ? 8000 : 3000
+
   test.info().annotations.push({
     type: 'AC9',
-    description: `navigation duration = ${duration.toFixed(1)} ms (budget 3000 ms, local preview)`,
+    description: `navigation duration = ${duration.toFixed(1)} ms (budget ${budget} ms, ${process.env.CI ? 'CI' : 'local preview'})`,
   })
-  console.log(`AC9 navigation duration: ${duration.toFixed(1)} ms`)
+  console.log(`AC9 navigation duration: ${duration.toFixed(1)} ms (budget ${budget} ms)`)
 
   expect(duration).toBeGreaterThan(0)
-  expect(duration, 'AC9 budget on local preview').toBeLessThan(3000)
+  expect(duration, `AC9 budget (${budget} ms)`).toBeLessThan(budget)
+})
+
+/** Collapse every run of whitespace, so line breaks and indentation cannot cause a mismatch. */
+const normalise = (text: string): string => text.replace(/\s+/g, ' ').trim()
+
+test('R9 — every visible line of the page is verbatim copy from docs/content.md', async ({
+  page,
+}) => {
+  // Mirrors the manual 21/21 check Architect ran by hand. The fixed-string assertions above only
+  // cover the strings we chose to list, so they cannot catch someone ADDING a sentence that is
+  // not in the approved copy. This test reads the approved file from the repository and requires
+  // each rendered line to be a substring of it, whitespace and line breaks aside.
+  const contentPath = fileURLToPath(new URL('../../docs/content.md', import.meta.url))
+  const approved = normalise(readFileSync(contentPath, 'utf8'))
+
+  await page.goto(PAGE_URL)
+  const rendered = await page.locator('body').innerText()
+
+  // The countdown line is generated from a template: content.md carries
+  // `Còn {X} ngày nữa là đến mùng 1 Tết`, while the page shows a number in place of {X}.
+  // Map the rendered number back to the template before comparing.
+  const mapped = rendered.replace(
+    /Còn \d+ ngày nữa là đến mùng 1 Tết/g,
+    site.countdown.labelTemplate,
+  )
+
+  const lines = mapped
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 3)
+
+  expect(lines.length, 'the page must render some text').toBeGreaterThan(0)
+
+  const drifting = lines.filter((line) => !approved.includes(normalise(line)))
+  expect(drifting, 'these rendered lines are not verbatim in docs/content.md').toEqual([])
 })

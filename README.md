@@ -70,6 +70,17 @@ npx playwright install --with-deps chromium   # lần đầu trên máy mới
 npm run test:e2e
 ```
 
+Bằng chứng cho gate — chạy tuần tự (`workers=1`) để giảm nhiễu tranh chấp tài nguyên:
+
+```sh
+npm run test:e2e:gate
+```
+
+Test **không** dựa vào retry để xanh. `retries` chỉ bật trong CI để giảm nhiễu hạ tầng, còn
+các phép đo được làm ổn định ngay trong test: mục AC4 chờ layout settle
+(`document.fonts.ready` + hai `requestAnimationFrame`) trước khi đọc `scrollWidth`, và in số
+đo mỗi lần chạy.
+
 Test chạy trên port riêng (mặc định `4399`, đổi bằng `E2E_PORT`) và **không** tái sử dụng
 server đang chạy: workspace này được nhiều Bot dùng chung, mỗi Bot có thể có checkout riêng
 đang chạy `astro preview` ở port mặc định 4321, và một test trỏ nhầm vào đó sẽ kiểm định

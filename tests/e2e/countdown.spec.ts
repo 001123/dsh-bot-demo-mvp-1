@@ -106,8 +106,11 @@ test.describe('the countdown (AC10)', () => {
   // and must switch over by itself, with no reload. The suite's fixed-instant cases cannot
   // catch a tick that never re-evaluates.
   // ca do Architect soạn, đưa vào theo yêu cầu Chief.
-  // (Bản nguyên văn chưa có trong comment Issue #1 tại thời điểm push; phần code dưới đây do
-  //  CodeReader viết theo đúng mô tả của Chief và sẽ đối chiếu lại khi Architect đăng nguyên văn.)
+  // CodeReader viết theo đặc tả của Chief và đã đối chiếu với nguyên văn của Architect ở
+  // Issue #1 comment 6107821670: tương đương về độ phủ (bản này còn assert thêm regex nhãn
+  // ngày và "không có dấu trừ"). Hai cảnh báo kỹ thuật của Architect đều đã thoả —
+  // `test.use({ timezoneId })` đặt ở cấp describe, và `page.clock.install` gọi TRƯỚC
+  // `page.goto`.
   test('7 — crosses the milestone live, without a reload', async ({ page }) => {
     const problems = watchForProblems(page)
 
@@ -135,8 +138,11 @@ test.describe('the label does not depend on the visitor time zone', () => {
   test.use({ timezoneId: 'America/New_York' })
 
   // ca do Architect soạn, đưa vào theo yêu cầu Chief.
-  // (Bản nguyên văn chưa có trong comment Issue #1 tại thời điểm push; phần code dưới đây do
-  //  CodeReader viết theo đúng mô tả của Chief và sẽ đối chiếu lại khi Architect đăng nguyên văn.)
+  // CodeReader viết theo đặc tả của Chief và đã đối chiếu với nguyên văn của Architect ở
+  // Issue #1 comment 6107821670: tương đương về độ phủ (bản này còn assert thêm regex nhãn
+  // ngày và "không có dấu trừ"). Hai cảnh báo kỹ thuật của Architect đều đã thoả —
+  // `test.use({ timezoneId })` đặt ở cấp describe, và `page.clock.install` gọi TRƯỚC
+  // `page.goto`.
   test('8 — 2027-01-20 still reads 17 days in America/New_York', async ({ page }) => {
     const problems = watchForProblems(page)
 
