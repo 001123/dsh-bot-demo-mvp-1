@@ -1,8 +1,9 @@
 # Nội dung mẫu — landing "Tết 2027 Happier"
 
-> **Trạng thái: DRAFT — chưa được duyệt.** Nội dung này phải được user duyệt **cùng `docs/plan.md` ở GATE 1c**. CodeReader **không** được dùng làm nội dung chính thức trước khi có chữ "Duyệt" của user.
+> **Trạng thái: APPROVED — user duyệt ở GATE 1c ngày 2026-10-11** (nguyên văn: "Duyệt", group chat "Demo MVP 1", 2026-10-11).
 >
-> Nguồn: Analyst (BA), 2026-10-11, chat Analyst ↔ user. DRAFT — chờ user duyệt ở GATE 1c. Nội dung thuộc Q1(a)/Q2(a)/Q3(a); không dùng ảnh ngoài (R3).
+> Nguồn: Analyst (BA), 2026-10-11, chat Analyst ↔ user. Nội dung thuộc Q1(a)/Q2(a)/Q3(a); không dùng ảnh ngoài (R3).
+> Bổ sung 2026-10-11 (Chief push theo đề xuất nguyên văn của Analyst, group chat "Demo MVP 1"): chuỗi trạng thái sau mốc 0, để khớp AC10.
 
 ## Hero
 - Tiêu đề chính: **Tết 2027 Happier**
@@ -13,6 +14,8 @@
 ## Đồng hồ đếm ngược (AC10)
 - Nhãn: "Còn {X} ngày nữa là đến mùng 1 Tết"
 - Fallback text tĩnh khi tắt JS (phải nằm sẵn trong HTML): "Mùng 1 Tết Đinh Mùi: thứ Bảy, 06/02/2027"
+- Sau mốc 0 — thay cho nhãn, đồng hồ dừng tick: "Chúc Mừng Năm Mới" (giữ đúng chữ hoa/thường này để khớp AC10; khác với lời chúc trong Khối 3)
+- Nhãn chuẩn để render/assert là đúng câu: "Còn {X} ngày nữa là đến mùng 1 Tết". Ghi "còn X ngày" ở plan T7 chỉ là mô tả, không phải chuỗi hiển thị.
 
 ## Khối 1 — Tết Nguyên đán 2027
 Tết Nguyên đán 2027 là Tết Đinh Mùi. Mùng 1 rơi vào thứ Bảy, 06/02/2027; ngày tất niên là thứ Sáu, 05/02/2027. Mùng 1 vào cuối tuần nên kỳ nghỉ thường được nối dài, thuận tiện cho sum họp và du xuân.
