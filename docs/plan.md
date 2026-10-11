@@ -2,7 +2,7 @@
 
 - Trạng thái: **APPROVED — GATE 1c đã qua** (nguồn: user gõ **"Duyệt"**, group chat "Demo MVP 1", 2026-10-11 — **ngày** đọc trực tiếp từ log group; **mốc giờ 09:12 UTC do Architect cấp, Chief chưa xác minh được giờ**). Hồ sơ duyệt = plan bản này + `docs/content.md` blob `7d21a4d7`. Baseline: spec `fb4b5f9` (blob `87e5c0f6`) + ADR `0002` (`e29cf5b`: bỏ Starlight, repo public)
 - Người soạn: Architect (ARCH) · Người thực thi: CodeReader (CODE)
-- Ngày: 2026-10-11 (bản 7 — đóng C6 (AC11 không thêm) và C2 (Q2 xác nhận), baseline spec `fb4b5f9`; bản 6: GATE 1c qua, T7 dùng đúng chuỗi `docs/content.md`, chi tiết test T7 theo AC10)
+- Ngày: 2026-10-11 (bản 8 — luồng ghi code nhánh `feat/*` + PR, sửa phụ thuộc T1/T7, cảnh báo Tailwind v4 `@theme`; các sửa này do Architect gửi nguyên văn trong group "Demo MVP 1", Chief push. Bản 7: đóng C6 (AC11 không thêm) + C2 (Q2 xác nhận), baseline spec `fb4b5f9`)
 - Nguồn gốc file: bản 1 ngày 2026-10-11 (commit `55bf79c`), do Architect soạn. Ghi chú cũ trong bản 2 về "ai viết file" đã được gỡ; mọi commit trên repo này hiện cùng một author, **không phân biệt được ai push** — việc này không ảnh hưởng nội dung plan.
 - Stack đã chốt: **Astro (SSG, KHÔNG Starlight) + Tailwind CSS**, deploy **GitHub Pages**, repo **public** (ADR 0001 + ADR 0002 `e29cf5b`)
 - Baseline spec: `docs/spec.md` trên `main`, commit `fb4b5f9` (blob `87e5c0f6`). Lịch sử gần: `dbea4b9` (chi tiết hoá AC10: mốc cố định UTC+7, làm tròn lên, dừng tick sau mốc, fallback `<noscript>`), `5402fc9` (user xác nhận lại Q2(a)), `fb4b5f9` (user chốt **không** thêm AC11).
@@ -19,6 +19,8 @@
 | P4 | User duyệt plan này ở GATE 1c | user | ✅ xong — "Duyệt", group chat "Demo MVP 1", 2026-10-11 |
 | P5 | Deploy thật lên Pages chỉ sau chữ **"Duyệt"** ở GATE 2 (`has_pages` hiện `false`) | user | ⏳ chờ |
 | P6 | **User duyệt `docs/content.md` ở GATE 1c** | user | ✅ xong — content blob `7d21a4d7`, trạng thái APPROVED 2026-10-11 |
+
+**Luồng ghi code**: CodeReader chỉ push lên nhánh `feat/tN-<mô tả>` rồi mở PR vào `main`; **chỉ Chief merge/push `main`**. Merge bằng squash hoặc rebase để SHA trên `main` = head đã review; Chief báo Architect head SHA + blob. (Nguồn: CodeReader nêu vướng ở T1, Architect chọn phương án nhánh + PR, group chat "Demo MVP 1", 2026-10-11; Chief chốt.)
 
 Chưa xong P1 (Q6–Q8) thì T1 vẫn có thể bắt đầu, nhưng các mục đánh dấu phụ thuộc P1 phải chờ: **Q7 phải chốt trước T3**, **Q8 phải chốt trước T7**. **T7 đã BẬT** (Q4 = có) và map vào **AC10**.
 
@@ -37,6 +39,7 @@ Chưa xong P1 (Q6–Q8) thì T1 vẫn có thể bắt đầu, nhưng các mục 
 - **Astro SSG (không Starlight)** render HTML tĩnh; 1 route duy nhất `/` ⇒ đạt AC1, AC8. Không có `template: splash`, không `pagefind`, không sidebar — các phần đó đã bị ADR 0002 bỏ.
 - **Tailwind CSS** dùng cho toàn bộ page/component; vì không còn Starlight nên **không cần** override `--sl-color-*`.
 - **Theme đỏ–vàng** đặt qua biến trong `src/styles/global.css` + config Tailwind.
+  Đã kiểm chứng ở T1: palette trong `tailwind.config.mjs` (nạp qua `@config`) **không** sinh biến `--color-tet-*` — Tailwind v4 nội suy thẳng giá trị vào utility (`.bg-tet-red{background-color:#c8102e}`). CSS tay muốn `var(--color-tet-*)` thì phải thêm khối `@theme` trong `global.css`. Mặc định: **chỉ dùng utility class**, không thêm `@theme`; đổi thì báo Architect.
 - **Đếm ngược (AC10)**: island Astro `client:load`, tính từ `Date()` phía client tới **`2027-02-06T00:00:00+07:00`** (mùng 1 Tết theo giờ VN); **không** gọi API/backend; có text tĩnh thay thế khi tắt JS; console sạch trước và sau khi giá trị cập nhật.
 - **JS tối thiểu**: chỉ island đếm ngược, phần còn lại render tĩnh để giữ AC9.
 - **Assets**: SVG/CSS tự vẽ hoặc ảnh có giấy phép, đặt trong `public/` — tránh R3 (bản quyền). Mọi `<img>` phải có `alt` tiếng Việt (AC5).
@@ -50,7 +53,7 @@ Thứ tự là thứ tự thực thi. (Task cấu hình Starlight của bản 1�
 - **File tạo**: `package.json`, `astro.config.mjs`, `tsconfig.json`, `tailwind.config.mjs`, `src/styles/global.css`, `.gitignore`, `README.md`
 - **Nội dung**: cài Astro + Tailwind (chốt **một** phiên bản: v4 qua plugin Vite, hoặc v3 + `@astrojs/tailwind`); khai `site` + `base` như mục 2; pin phiên bản.
 - **Test**: `npm ci && npm run build` PASS; `npm run preview` mở được `http://localhost:4321/dsh-bot-demo-mvp-1/`.
-- **Phụ thuộc**: P1, P4.
+- **Phụ thuộc**: P4. P1 **không** chặn T1 — Q7 chặn T3, Q8 chặn T7.
 
 ### T2 — Layout + theme đỏ–vàng
 - **File tạo**: `src/layouts/BaseLayout.astro`, `src/styles/global.css`
@@ -101,7 +104,7 @@ Thứ tự là thứ tự thực thi. (Task cấu hình Starlight của bản 1�
 - **File tạo**: `src/components/Countdown.astro` (island `client:load`)
 - **Nội dung**: tính từ `Date()` phía client tới **`2027-02-06T00:00:00+07:00`** (giờ VN UTC+7 cố định, **không** phụ thuộc timezone máy người xem — AC10); **không** API/backend (spec §5); nhãn hiển thị **đúng chuỗi trong `docs/content.md`**: `"Còn {X} ngày nữa là đến mùng 1 Tết"`; `X` = số ngày **làm tròn LÊN** (23:59:59 ngày 05/02/2027 ⇒ "còn 1 ngày"); **qua mốc thì dừng tick** và thay nhãn bằng `"Chúc Mừng Năm Mới"` (đúng chữ hoa/thường này, khác lời chúc ở Khối 3), **không** hiển thị số âm; fallback tĩnh **trong `<noscript>`**: `"Mùng 1 Tết Đinh Mùi: thứ Bảy, 06/02/2027"`, không để trống, giữ độ cao để không vỡ layout ở 375px (AC4).
 - **Test**: Playwright `clock` ở **4 thời điểm**, assert nội dung đúng ở từng mốc + **console sạch ở cả 4** (AC6, AC10): (1) trước Tết 2027-01-20; (2) biên dưới 05/02/2027 23:59:59+07 ⇒ "còn 1 ngày" (làm tròn lên); (3) sau mốc 06/02/2027 00:00:01+07 ⇒ "Chúc Mừng Năm Mới", không số âm; (4) sau Tết 2027-02-10. Thêm case `javaScriptEnabled: false` để kiểm fallback trong `<noscript>`; AC8 vẫn đạt vì nội dung chính nằm trong HTML. Mọi chuỗi assert phải copy **nguyên văn** từ `docs/content.md` (không tự viết). **Q8 phải được chốt trước T7** (mặc định: Chrome/Safari/Firefox 2 bản gần nhất).
-- **Phụ thuộc**: AC10 đã chi tiết hoá trong spec `dbea4b9` (blob `81945a86`); T6.
+- **Phụ thuộc**: AC10 trong spec `fb4b5f9` (blob `87e5c0f6`); T6.
 
 ### T8 — README
 - **File sửa**: `README.md`
