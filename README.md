@@ -89,6 +89,11 @@ Nó nằm ở `tests/live/` với config riêng `playwright.live.config.ts` (**k
 Số đo navigation trong bộ này là **thời gian đường mạng** (DNS/CDN/TTFB) trên bản deploy —
 **không** phải verdict AC9; verdict AC9 do bộ local (`tests/e2e/landing.spec.ts`) quyết định.
 
+Bộ này **không** đưa vào CI dạng gate: kết quả chỉ có giá trị khi chạy **tay**, kèm **thời điểm
+chạy và số đo**. Bản đang deploy có thể lệch với commit đang xem (chưa có marker nối
+deploy ↔ commit — nợ đã biết), nên một lần đỏ ở đây phải đọc là "cần kiểm lại", không phải
+"build hỏng".
+
 Test **không** dựa vào retry để xanh. `retries` chỉ bật trong CI để giảm nhiễu hạ tầng, còn
 các phép đo được làm ổn định ngay trong test: mục AC4 chờ layout settle
 (`document.fonts.ready` + hai `requestAnimationFrame`) trước khi đọc `scrollWidth`, và in số

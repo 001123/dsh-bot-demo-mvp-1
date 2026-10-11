@@ -9,8 +9,7 @@ import { site } from '../../src/content/site'
 // It runs from `tests/live` with `playwright.live.config.ts` (no webServer, no local port) so
 // `npm test` stays offline and other sessions keep their previews on 4321/4322.
 //
-//   LIVE_URL=https://001123.github.io/dsh-bot-demo-mvp-1/ \
-//     npx playwright test -c playwright.live.config.ts --workers=1
+//   LIVE_URL=https://001123.github.io/dsh-bot-demo-mvp-1/ npm run test:e2e:live
 const PAGE_URL = LIVE_URL
 
 const dayLabel = (days: number) => site.countdown.labelTemplate.replace('{X}', String(days))
@@ -60,13 +59,23 @@ test('live/AC6 — no console error or page error on load, and after scrolling t
   await page.goto(PAGE_URL, { waitUntil: 'load' })
   await expect(page.locator('[data-countdown]')).toBeVisible()
 
-  // Walk down the page so any lazy work runs, then wait for real conditions instead of a fixed
-  // sleep: the network must fall quiet and the webfont swap must have finished.
+  // Walk down the page so any lazy work runs, then wait for DOM-observable conditions instead
+  // of a blanket sleep. `toHaveText` polls, so it also waits out whatever the scroll kicked off.
+  //
+  // Deliberately NOT `waitForLoadState('networkidle')`: Playwright documents that state as
+  // unreliable (it can hang, and it is itself flaky), so using it here would trade one flake for
+  // another instead of removing one.
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
-  await page.waitForLoadState('networkidle')
   await page.evaluate(async () => {
     await document.fonts?.ready
   })
+  await expect(page.locator('[data-countdown]')).toHaveText(DAY_LABEL_RE)
+
+  // Then keep a short BOUNDED tail window, because AC6 must still be able to catch an error that
+  // only surfaces after the last observable event; waiting for "done" too eagerly would just
+  // move the blind spot. 300 ms of tail AFTER the conditions above is not the old 1 s blanket
+  // sleep, which ran before we knew anything had finished.
+  await page.waitForTimeout(300)
 
   expect(problems, 'the live page must log no error').toEqual([])
 })
